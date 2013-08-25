@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Tribes Ascend Stats</string>
+    <string name="action_settings">Refresh</string>
+    <string name="title_section1">Player Summary</string>
+    <string name="title_section2">Recent Matches</string>
+    <string name="title_section3">Time Played</string>
+    <string name="title_activity_match_details">MatchDetails</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="name"/>
+
+</resources>
