@@ -20,6 +20,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -41,12 +43,38 @@ public class MatchDetailsActivity extends Activity {
 			detailsLink = intent.getStringExtra("matchDetails");
 
 			if(isNetworkAvailable()){
-				DownloadWebPageTask task = new DownloadWebPageTask();
-				task.execute(new String[] { PlayerActivity.url + PlayerActivity.user });
+				asyncDownloadData();
 			} else {
 				Toast.makeText(ctx, "No internet access", Toast.LENGTH_SHORT).show();
 				finish();
 			}	
+	}
+	
+	private void asyncDownloadData(){
+		DownloadWebPageTask task = new DownloadWebPageTask();
+		task.execute(new String[] { PlayerActivity.url + PlayerActivity.user });
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_refresh:
+			asyncDownloadData();
+			break;
+		case R.id.action_refresh2:
+			asyncDownloadData();
+			break;
+		default:
+			break;
+		}
+		
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
 	}
 	
 	private boolean isNetworkAvailable() {

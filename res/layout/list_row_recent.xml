@@ -20,13 +20,9 @@
         android:layout_centerInParent="false"
         android:layout_centerVertical="false"
         android:adjustViewBounds="true"
+        android:contentDescription="@string/mapNameDisc"
         android:maxHeight="100dp"
         android:maxWidth="100dp" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="MapName"
+                android:text="@string/mapName"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
@@ -46,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="MapPlayTime" />
+                android:text="@string/MapPlayTime" />
 
             <LinearLayout
                 android:id="@+id/linearLayout4"
@@ -71,13 +67,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="10dp"
-                            android:text="Kills" />
+                            android:text="@string/Kills" />
 
                         <TextView
                             android:id="@+id/killsText"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="15" />
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -90,13 +85,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="10dp"
-                            android:text="K:D" />
+                            android:text="@string/KD" />
 
                         <TextView
                             android:id="@+id/kdText"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1.42" />
+                            android:layout_height="wrap_content"/>
                     </LinearLayout>
                 </LinearLayout>
 
@@ -118,13 +112,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="10dp"
-                            android:text="Deaths" />
+                            android:text="@string/Deaths" />
 
                         <TextView
                             android:id="@+id/deathsText"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="15" />
+                            android:layout_height="wrap_content"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -137,13 +130,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="10dp"
-                            android:text="Score" />
+                            android:text="@string/Score" />
 
                         <TextView
                             android:id="@+id/scoreText"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1.42" />
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -163,13 +155,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="10dp"
-                            android:text="Assists" />
+                            android:text="@string/Assists" />
 
                         <TextView
                             android:id="@+id/assistsText"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="15" />
+                            android:layout_height="wrap_content"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -182,13 +173,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="10dp"
-                            android:text="Time Played" />
+                            android:text="@string/TimePlayed" />
 
                         <TextView
                             android:id="@+id/timeText"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1.42" />
+                            android:layout_height="wrap_content"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -203,6 +193,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
                     android:maxHeight="40dp"
                     android:maxWidth="40dp" />
 
@@ -211,6 +202,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
                     android:maxHeight="40dp"
                     android:maxWidth="40dp" />
 
@@ -219,6 +211,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
                     android:maxHeight="40dp"
                     android:maxWidth="40dp" />
 
@@ -227,6 +220,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
                     android:maxHeight="40dp"
                     android:maxWidth="40dp" />
 
@@ -235,6 +229,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
                     android:maxHeight="40dp"
                     android:maxWidth="40dp" />
 
@@ -243,6 +238,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
                     android:maxHeight="40dp"
                     android:maxWidth="40dp" />
 
@@ -251,6 +247,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
                     android:maxHeight="40dp"
                     android:maxWidth="40dp" />
 
@@ -259,6 +256,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
                     android:maxHeight="40dp"
                     android:maxWidth="40dp" />
 
@@ -267,11 +265,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
                     android:maxHeight="40dp"
                     android:maxWidth="40dp" />
+
             </LinearLayout>
         </LinearLayout>
 
-    </LinearLayout>
 
 </RelativeLayout>

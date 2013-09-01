@@ -7,8 +7,20 @@
     <string name="title_section2">Recent Matches</string>
     <string name="title_section3">Time Played</string>
     <string name="title_activity_match_details">MatchDetails</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="title_activity_main">MainActivity</string>
     <string name="name"/>
+    <string name="Submit">Submit</string>
+    <string name="search">Search for a player</string>
+    <string name="back">Tribes background</string>
+    <string name="mapName">Map Name</string>
+    <string name="MapPlayTime">Map Play Time</string>
+    <string name="Kills">Kills</string>
+    <string name="KD">K:D</string>
+    <string name="Deaths">Deaths</string>
+    <string name="Score"></string>
+    <string name="Assists">Assists</string>
+    <string name="TimePlayed">Time Played</string>
+    <string name="mapNameDisc">Map Name</string>
+    <string name="classPic">Class</string>
+    <string name="soon">Soon</string>
 
 </resources>

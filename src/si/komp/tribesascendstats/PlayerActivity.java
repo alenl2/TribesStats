@@ -71,7 +71,6 @@ public class PlayerActivity extends FragmentActivity {
 		String userID = intent.getStringExtra("userName");
 		user = userID;
 		asyncDownloadData();
-
 	}
 
 	@Override
@@ -537,9 +536,10 @@ public class PlayerActivity extends FragmentActivity {
 					});
 				}
 				return rootView;
+			} else{
+				View rootView = inflater.inflate(R.layout.fragment_main_time, container, false);
+				return rootView;
 			}
-			View rootView = inflater.inflate(R.layout.fragment_main_dummy, container, false);
-			return rootView;
 		}
 	}
 
@@ -551,7 +551,17 @@ public class PlayerActivity extends FragmentActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		asyncDownloadData();
+		switch (item.getItemId()) {
+		case R.id.action_refresh:
+			asyncDownloadData();
+			break;
+		case R.id.action_refresh2:
+			asyncDownloadData();
+			break;
+		default:
+			break;
+		}
+		
 		return super.onOptionsItemSelected(item);
 	}
 

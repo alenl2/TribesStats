@@ -23,6 +23,7 @@
         android:layout_centerInParent="true"
         android:layout_centerVertical="false"
         android:baselineAlignBottom="false"
+        android:contentDescription="@string/back"
         android:cropToPadding="false"
         android:src="@drawable/attachment" />
 
@@ -33,7 +34,7 @@
         android:layout_below="@+id/editText1"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
-        android:text="Submit" />
+        android:text="@string/Submit" />
 
     <EditText
         android:id="@+id/editText1"
@@ -57,7 +58,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="19dp"
-        android:text="Search for a player"
+        android:text="@string/search"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>
