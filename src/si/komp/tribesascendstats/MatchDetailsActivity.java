@@ -72,6 +72,13 @@ public class MatchDetailsActivity extends Activity {
 				try {
 					Document document = Jsoup.connect(url).data("__VIEWSTATE", PlayerActivity.viewState).data(detailsLink, "Match Details").method(Method.POST).post();
 
+					try {
+						if(document.getElementById("lblError").html().contains("No matches")){
+							return ret;
+						}
+					} catch (Exception e) {
+					}
+					
 					appTitle = document.title();
 					Element details = document.getElementById("detailsContent");
 					Elements players = details.getElementsByClass("detailsItemTemplateTable");
@@ -96,31 +103,35 @@ public class MatchDetailsActivity extends Activity {
 		}
 		@Override
 		protected void onPostExecute(final ArrayList<HashMap<String, String>> result) {
-			try {
-				setTitle(appTitle);
-				DetailsAdapter adapter=new DetailsAdapter((Activity) ctx, result);
-				ListView lw = ((ListView) findViewById(R.id.listRecent));
-				lw.setAdapter(adapter);
-		        // Click event for single list row
-		        lw.setOnItemClickListener(new OnItemClickListener() {
-		            @Override
-		            public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-		            	Toast.makeText(ctx, "User "+result.get(position).get("name"), Toast.LENGTH_SHORT).show();
-		            	Intent returnIntent = new Intent();
-		            	 returnIntent.putExtra("showUser",result.get(position).get("name"));
-		            	 setResult(RESULT_OK,returnIntent);     
-		            	 finish();
-		            }
-
-		        });
-		        if (dialog.isShowing()) {
-		            dialog.dismiss();
-		        }
-			} catch (Exception e) {
-				Toast.makeText(ctx, "An error occurred. Check internet connection", Toast.LENGTH_SHORT).show();
+			if(result.size() != 0){
+				try {
+					setTitle(appTitle);
+					DetailsAdapter adapter=new DetailsAdapter((Activity) ctx, result);
+					ListView lw = ((ListView) findViewById(R.id.listRecent));
+					lw.setAdapter(adapter);
+			        // Click event for single list row
+			        lw.setOnItemClickListener(new OnItemClickListener() {
+			            @Override
+			            public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+			            	Toast.makeText(ctx, "User "+result.get(position).get("name"), Toast.LENGTH_SHORT).show();
+			            	Intent returnIntent = new Intent();
+			            	 returnIntent.putExtra("showUser",result.get(position).get("name"));
+			            	 setResult(RESULT_OK,returnIntent);     
+			            	 finish();
+			            }
+	
+			        });
+			        if (dialog.isShowing()) {
+			            dialog.dismiss();
+			        }
+				} catch (Exception e) {
+					Toast.makeText(ctx, "An error occurred. Check internet connection", Toast.LENGTH_SHORT).show();
+					finish();
+				}
+			} else {
+				Toast.makeText(ctx, "No matches Found", Toast.LENGTH_SHORT).show();
 				finish();
 			}
-			
 		}
 	}
 }
