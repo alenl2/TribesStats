@@ -53,7 +53,7 @@ public class PlayerActivity extends FragmentActivity {
 	 */
 	ViewPager mViewPager;
 
-	public static String url = "http://account.hirezstudios.com/tribesascend/stats.aspx?player=";
+	public static String url = "https://account.hirezstudios.com/tribesascend/stats.aspx?player=";
 	public static String user;
 
 	static View playerSum = null;
