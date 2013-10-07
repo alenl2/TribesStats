@@ -89,7 +89,7 @@ public class MatchDetailsActivity extends Activity {
 		protected void onPreExecute() {
 			super.onPreExecute();
 			this.dialog.setCancelable(false);
-	        this.dialog.setMessage("Please wait");
+	        this.dialog.setMessage("Please wait. Downloading data.");
 	        this.dialog.show();
 		}
 	    

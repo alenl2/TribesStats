@@ -63,7 +63,7 @@ public class DetailsAdapter extends BaseAdapter {
         			((TextView)vi.findViewById(R.id.playerKills1)).setText(dat.get(key));
         		}
         		if(key.contains("ClassTimePlayed")){
-        			((TextView)vi.findViewById(R.id.playerTime1)).setText(dat.get(key));
+        			((TextView)vi.findViewById(R.id.playerTime1)).setText(dat.get(key).replace("minutes", "min"));
         		}
         	}
         	if(key.startsWith("Soldier")){
@@ -76,7 +76,7 @@ public class DetailsAdapter extends BaseAdapter {
         			((TextView)vi.findViewById(R.id.playerKills2)).setText(dat.get(key));
         		}
         		if(key.contains("ClassTimePlayed")){
-        			((TextView)vi.findViewById(R.id.playerTime2)).setText(dat.get(key));
+        			((TextView)vi.findViewById(R.id.playerTime2)).setText(dat.get(key).replace("minutes", "min"));
         		}
         	}
         	if(key.startsWith("Brute")){
@@ -89,7 +89,7 @@ public class DetailsAdapter extends BaseAdapter {
         			((TextView)vi.findViewById(R.id.playerKills3)).setText(dat.get(key));
         		}
         		if(key.contains("ClassTimePlayed")){
-        			((TextView)vi.findViewById(R.id.playerTime3)).setText(dat.get(key));
+        			((TextView)vi.findViewById(R.id.playerTime3)).setText(dat.get(key).replace("minutes", "min"));
         		}
         	}
         	if(key.startsWith("Sentinel")){
@@ -102,7 +102,7 @@ public class DetailsAdapter extends BaseAdapter {
         			((TextView)vi.findViewById(R.id.playerKills4)).setText(dat.get(key));
         		}
         		if(key.contains("ClassTimePlayed")){
-        			((TextView)vi.findViewById(R.id.playerTime4)).setText(dat.get(key));
+        			((TextView)vi.findViewById(R.id.playerTime4)).setText(dat.get(key).replace("minutes", "min"));
         		}
         	}
         	if(key.startsWith("Juggernaught")){
@@ -115,7 +115,7 @@ public class DetailsAdapter extends BaseAdapter {
         			((TextView)vi.findViewById(R.id.playerKills5)).setText(dat.get(key));
         		}
         		if(key.contains("ClassTimePlayed")){
-        			((TextView)vi.findViewById(R.id.playerTime5)).setText(dat.get(key));
+        			((TextView)vi.findViewById(R.id.playerTime5)).setText(dat.get(key).replace("minutes", "min"));
         		}
         	}
         	if(key.startsWith("Technician")){
@@ -128,7 +128,7 @@ public class DetailsAdapter extends BaseAdapter {
         			((TextView)vi.findViewById(R.id.playerKills6)).setText(dat.get(key));
         		}
         		if(key.contains("ClassTimePlayed")){
-        			((TextView)vi.findViewById(R.id.playerTime6)).setText(dat.get(key));
+        			((TextView)vi.findViewById(R.id.playerTime6)).setText(dat.get(key).replace("minutes", "min"));
         		}
         	}
         	if(key.startsWith("Raider")){
@@ -141,7 +141,7 @@ public class DetailsAdapter extends BaseAdapter {
         			((TextView)vi.findViewById(R.id.playerKills7)).setText(dat.get(key));
         		}
         		if(key.contains("ClassTimePlayed")){
-        			((TextView)vi.findViewById(R.id.playerTime7)).setText(dat.get(key));
+        			((TextView)vi.findViewById(R.id.playerTime7)).setText(dat.get(key).replace("minutes", "min"));
         		}
         	}
         	if(key.startsWith("Infiltrator")){
@@ -154,7 +154,7 @@ public class DetailsAdapter extends BaseAdapter {
         			((TextView)vi.findViewById(R.id.playerKills8)).setText(dat.get(key));
         		}
         		if(key.contains("ClassTimePlayed")){
-        			((TextView)vi.findViewById(R.id.playerTime8)).setText(dat.get(key));
+        			((TextView)vi.findViewById(R.id.playerTime8)).setText(dat.get(key).replace("minutes", "min"));
         		}
         	}
         	if(key.startsWith("Doombringer")){
@@ -167,7 +167,7 @@ public class DetailsAdapter extends BaseAdapter {
         			((TextView)vi.findViewById(R.id.playerKills9)).setText(dat.get(key));
         		}
         		if(key.contains("ClassTimePlayed")){
-        			((TextView)vi.findViewById(R.id.playerTime9)).setText(dat.get(key));
+        			((TextView)vi.findViewById(R.id.playerTime9)).setText(dat.get(key).replace("minutes", "min"));
         		}
         	}
         }

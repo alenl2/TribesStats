@@ -4,7 +4,9 @@
     android:layout_height="wrap_content"
     android:background="@drawable/list_selector_background_transition_holo_dark"
     android:orientation="horizontal"
-    android:padding="1dip" >
+    android:padding="1dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp" >
 
     <TextView
         android:id="@+id/text1"
@@ -12,7 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="5dp" />
+        android:layout_marginLeft="5dp"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/text2"
@@ -21,6 +24,7 @@
         android:layout_alignBaseline="@+id/text1"
         android:layout_alignBottom="@+id/text1"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="5dp" />
+        android:layout_marginRight="5dp"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>
