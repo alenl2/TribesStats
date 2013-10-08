@@ -53,7 +53,7 @@ public class PlayerActivity extends FragmentActivity {
 	 */
 	ViewPager mViewPager;
 
-	public static String url = "http://account.hirezstudios.com/tribesascend/stats.aspx?player=";
+	public static String url = "https://account.hirezstudios.com/tribesascend/stats.aspx?player=";
 	public static String user;
 
 	static View playerSum = null;
@@ -109,7 +109,7 @@ public class PlayerActivity extends FragmentActivity {
 		protected void onPreExecute() {
 			super.onPreExecute();
 			this.dialog.setCancelable(false);
-			this.dialog.setMessage("Please wait");
+			this.dialog.setMessage("Please wait. Downloading data.");
 			this.dialog.show();
 		}
 

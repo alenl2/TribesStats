@@ -22,5 +22,10 @@
     <string name="mapNameDisc">Map Name</string>
     <string name="classPic">Class</string>
     <string name="soon">Soon</string>
+    <string name="score">Score</string>
+    <string name="classs">"Class: "</string>
+    <string name="dmg">"    Dmg: "</string>
+    <string name="kills">"    K: "</string>
+    <string name="time">"    Time: "</string>
 
 </resources>
