@@ -32,6 +32,7 @@ public class TimeDetails extends Activity {
 		
 		TextView tv1 = (TextView) findViewById(R.id.timeClassNameDetails);
 		TextView tv2 = (TextView) findViewById(R.id.timeClasstimeDetails);
+		setTitle(details.get("name") + " class usage");
 		tv1.setText(details.get("name"));
 		tv2.setText(details.get("timeForClass") + " mins");
 		
