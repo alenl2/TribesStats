@@ -1,6 +1,7 @@
 package si.komp.tribesascendstats;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -12,6 +13,7 @@ import org.jsoup.select.Elements;
 
 import si.komp.tribesascendstats.adapters.Adapter;
 import si.komp.tribesascendstats.adapters.RecentAdapter;
+import si.komp.tribesascendstats.adapters.TimeAdapter;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -79,6 +81,12 @@ public class PlayerActivity extends FragmentActivity {
 			if (resultCode == RESULT_OK) {
 				String result = data.getStringExtra("showUser");
 				user = result;
+				asyncDownloadData();
+			}
+		}
+		
+		if(requestCode == 2){
+			if(resultCode == RESULT_OK){
 				asyncDownloadData();
 			}
 		}
@@ -389,31 +397,46 @@ public class PlayerActivity extends FragmentActivity {
 					// TODO this to tab3
 					try {
 						Elements statsTab = doc.getElementById("statsTab").getAllElements();
+						
+						ArrayList<HashMap<String, String>> times = new ArrayList<HashMap<String, String>>();
+						
+						ArrayList<String> test = new ArrayList<String>(); //used to check if that element was allredy in there because tribes ppl used id tag on one page 10 times >*
+						
 						for (Element tab : statsTab) {
 							if (tab.hasAttr("id")) {
+								HashMap<String, String> toAdd = new HashMap<String, String>();
 								try {
 									String currentClass = tab.getElementById("lblTimePlayedClass").html();
+									if(test.contains(currentClass)){
+										continue;
+									}
+									test.add(currentClass);
+									toAdd.put("name", currentClass);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
+								Integer classPlayTime = 0;
 								try {
 									for (Element mapTime : tab.getElementsByClass("timeplayed")) {
 										try {
 											String playedMap = mapTime.getElementsByClass("map").get(0).html();
-										} catch (Exception e) {
-											e.printStackTrace();
-										}
-										try {
 											String timePlayed = mapTime.getElementsByClass("time").get(0).html();
+											classPlayTime += Integer.parseInt(timePlayed);
+											
+											toAdd.put("map-"+playedMap, timePlayed);
 										} catch (Exception e) {
 											e.printStackTrace();
 										}
+										
 									}
+									toAdd.put("timeForClass", String.valueOf(classPlayTime));
+									times.add(toAdd);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
 							}
 						}
+						ret.put("times", times);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -538,11 +561,26 @@ public class PlayerActivity extends FragmentActivity {
 				return rootView;
 			} else{
 				View rootView = inflater.inflate(R.layout.fragment_main_time, container, false);
+				if(userData != null){
+					TimeAdapter adapter = new TimeAdapter((Activity) ctx, userData.get("times"));
+					ListView lw = ((ListView) rootView.findViewById(R.id.listViewTime));
+					lw.setScrollingCacheEnabled(false);
+					lw.setAdapter(adapter);
+					lw.setOnItemClickListener(new OnItemClickListener() {
+						@Override
+						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+							Intent it = new Intent(ctx, TimeDetails.class);
+							it.putExtra("data", userData.get("times").get(position));
+							getActivity().startActivityForResult(it, 2);
+							
+						}
+					});
+				}
 				return rootView;
 			}
 		}
 	}
-
+	
 	private boolean isNetworkAvailable() {
 		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
