@@ -1,7 +1,6 @@
 package si.komp.tribesascendstats;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;

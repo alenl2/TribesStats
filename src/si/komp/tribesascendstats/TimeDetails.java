@@ -4,19 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import si.komp.tribesascendstats.adapters.Adapter;
-
-import android.os.Bundle;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class TimeDetails extends Activity {
 	
