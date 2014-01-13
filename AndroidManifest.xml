@@ -5,8 +5,8 @@
     android:versionName="1.2" >
 
     <uses-sdk
-        android:minSdkVersion="9"
-        android:targetSdkVersion="18" />
+        android:minSdkVersion="4"
+        android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,27 +14,33 @@
     <application
         android:allowBackup="true"
         android:allowClearUserData="false"
-        android:debuggable="false"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
             android:name="si.komp.tribesascendstats.PlayerActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" >
         </activity>
         <activity
             android:name="si.komp.tribesascendstats.MatchDetailsActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_match_details"
-            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" >
+        </activity>
+        
+        <activity
+            android:name="si.komp.tribesascendstats.TimeDetails"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_time_details" 
             android:theme="@style/AppTheme" >
         </activity>
         <activity
             android:name="si.komp.tribesascendstats.MainActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,10 +48,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="si.komp.tribesascendstats.TimeDetails"
-            android:label="@string/title_activity_time_details" >
-        </activity>
+
     </application>
 
 </manifest>

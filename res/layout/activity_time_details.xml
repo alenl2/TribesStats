@@ -15,7 +15,6 @@
         android:layout_alignBaseline="@+id/timeClassNameDetails"
         android:layout_alignBottom="@+id/timeClassNameDetails"
         android:layout_alignParentRight="true"
-        android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ImageView
@@ -25,6 +24,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignTop="@+id/timeClasstimeDetails"
         android:adjustViewBounds="true"
+        android:contentDescription="@string/imgForViewClass"
         android:maxHeight="40dp"
         android:maxWidth="40dp"
         android:src="@drawable/brute" />
@@ -45,7 +45,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/timeTimeDetailsImage"
-        android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>

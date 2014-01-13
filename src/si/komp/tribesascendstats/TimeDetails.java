@@ -1,14 +1,13 @@
 package si.komp.tribesascendstats;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Map;
 
 import si.komp.tribesascendstats.adapters.Adapter;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -22,13 +21,16 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class TimeDetails extends Activity {
+	Context ctx;
 	
+	ArrayList<HashMap<String, String>> toPass;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_time_details);
 		Intent intent = getIntent();
 		
+		ctx = this;
 		@SuppressWarnings("unchecked")
 		HashMap<String, String> details = (HashMap<String, String>) intent.getSerializableExtra("data");
 		
@@ -39,7 +41,7 @@ public class TimeDetails extends Activity {
 		tv1.setText(details.get("name"));
 		tv2.setText(details.get("timeForClass") + " mins");
 		
-		ArrayList<HashMap<String, String>> toPass = new ArrayList<HashMap<String,String>>();
+		toPass = new ArrayList<HashMap<String,String>>();
 		
 		for(String key: details.keySet()){
 			if(key.equals("name") || key.equals("timeForClass")){
@@ -52,13 +54,8 @@ public class TimeDetails extends Activity {
 				toPass.add(ins);
 			}
 		}
-		
-		
-		Collections.sort(toPass, new CustomComparator());
-		
-		
-		
-		
+
+		Collections.sort(toPass, new CustomComparator());//this could be optimised to run when we are creating toPass hashmap	
 		
 		Adapter adapter = new Adapter(this, toPass);
 		ListView lw = ((ListView) findViewById(R.id.detailsTimeClasses));
@@ -67,7 +64,7 @@ public class TimeDetails extends Activity {
 		lw.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				//Toast.makeText(ctx, "Match was allredy removed", Toast.LENGTH_SHORT).show(); //we need to sort the data to be able to doo this
+				Toast.makeText(ctx, toPass.get(position).get("name")+" -- "+toPass.get(position).get("value"), Toast.LENGTH_SHORT).show();
 			}
 		});
 		

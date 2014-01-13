@@ -1,6 +1,8 @@
 package si.komp.tribesascendstats;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -20,6 +22,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -62,8 +65,10 @@ public class PlayerActivity extends FragmentActivity {
 	static View playerSum = null;
 	static Context ctx;
 	static String viewState = "";
+	static boolean flag = true;
 	public static HashMap<String, ArrayList<HashMap<String, String>>> userData;
-
+	       
+	int oldConfigInt;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -73,12 +78,27 @@ public class PlayerActivity extends FragmentActivity {
 		Intent intent = getIntent();
 		String userID = intent.getStringExtra("userName");
 		user = userID;
-		asyncDownloadData();
+		
+		
+		
+	    if(flag){
+	    	asyncDownloadData();
+	    }
 	}
+	
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+	    // TODO Auto-generated method stub
+	    flag = false;
+	    super.onConfigurationChanged(newConfig);
+	}
+	
 	
 	@Override
 	public void onStart() {
 	    super.onStart();
+	    
 	    EasyTracker.getInstance(this).activityStart(this);
 	  }
 
@@ -585,7 +605,11 @@ public class PlayerActivity extends FragmentActivity {
 			} else{
 				View rootView = inflater.inflate(R.layout.fragment_main_time, container, false);
 				if(userData != null){
-					TimeAdapter adapter = new TimeAdapter((Activity) ctx, userData.get("times"));
+					ArrayList<HashMap<String, String>> unsorted = userData.get("times");
+					Collections.sort(unsorted, new CustomComparator2());
+					
+					
+					TimeAdapter adapter = new TimeAdapter((Activity) ctx, unsorted);
 					ListView lw = ((ListView) rootView.findViewById(R.id.listViewTime));
 					lw.setScrollingCacheEnabled(false);
 					lw.setAdapter(adapter);
@@ -630,4 +654,21 @@ public class PlayerActivity extends FragmentActivity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+}
+
+
+class CustomComparator2 implements Comparator<HashMap<String, String>> {
+    @Override
+    public int compare(HashMap<String, String> o1, HashMap<String, String> o2) {
+    	try {
+            if(Integer.parseInt(o1.get("timeForClass")) >= Integer.parseInt(o2.get("timeForClass"))){
+            	return -1;
+            }
+            return 1;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+
+    }
 }
