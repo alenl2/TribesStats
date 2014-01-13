@@ -1,5 +1,7 @@
 package si.komp.tribesascendstats;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -35,7 +37,20 @@ public class MainActivity extends Activity {
 		String name = sharedPref.getString(getString(R.string.name), "");
 		edittext.setText(name);
 		edittext.setSelectAllOnFocus(true);
+
 	}
+	
+	@Override
+	public void onStart() {
+	    super.onStart();
+	    EasyTracker.getInstance(this).activityStart(this);
+	  }
+
+	@Override
+	public void onStop() {
+	    super.onStop();
+	    EasyTracker.getInstance(this).activityStop(this);
+	  }
 	
 	private OnEditorActionListener onEditorActionListener = new OnEditorActionListener() {
 		

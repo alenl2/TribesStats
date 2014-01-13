@@ -10,6 +10,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import si.komp.tribesascendstats.adapters.Adapter;
 import si.komp.tribesascendstats.adapters.RecentAdapter;
 import si.komp.tribesascendstats.adapters.TimeAdapter;
@@ -73,6 +75,18 @@ public class PlayerActivity extends FragmentActivity {
 		user = userID;
 		asyncDownloadData();
 	}
+	
+	@Override
+	public void onStart() {
+	    super.onStart();
+	    EasyTracker.getInstance(this).activityStart(this);
+	  }
+
+	@Override
+	public void onStop() {
+	    super.onStop();
+	    EasyTracker.getInstance(this).activityStop(this);
+	  }
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -337,7 +351,12 @@ public class PlayerActivity extends FragmentActivity {
 								e.printStackTrace();
 							}
 							try {
-								playedGame.put("matchDetails", game.getElementById("btnGoToMap").attr("name"));
+								if(game.getElementById("btnGoToMap") != null){ //lots of null pointers here because hi-rez keeps only recent match history and when they dellete it the link is gone
+									playedGame.put("matchDetails", game.getElementById("btnGoToMap").attr("name"));
+								} else {
+									playedGame.put("matchDetails", "NoDetails!!!");
+								}
+								
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -419,7 +438,7 @@ public class PlayerActivity extends FragmentActivity {
 									for (Element mapTime : tab.getElementsByClass("timeplayed")) {
 										try {
 											String playedMap = mapTime.getElementsByClass("map").get(0).html();
-											String timePlayed = mapTime.getElementsByClass("time").get(0).html();
+											String timePlayed = mapTime.getElementsByClass("time").get(0).html().replace("&lt; ", "");
 											classPlayTime += Integer.parseInt(timePlayed);
 											
 											toAdd.put("map-"+playedMap, timePlayed);
@@ -550,9 +569,14 @@ public class PlayerActivity extends FragmentActivity {
 					lw.setOnItemClickListener(new OnItemClickListener() {
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-							Intent intent = new Intent(ctx, MatchDetailsActivity.class);
-							intent.putExtra("matchDetails", userData.get("recent").get(position).get("matchDetails"));
-							getActivity().startActivityForResult(intent, 1);
+							if(userData.get("recent").get(position).get("matchDetails").equals("NoDetails!!!") == false){
+								Intent intent = new Intent(ctx, MatchDetailsActivity.class);
+								intent.putExtra("matchDetails", userData.get("recent").get(position).get("matchDetails"));
+								getActivity().startActivityForResult(intent, 1);	
+							} else {
+								Toast.makeText(ctx, "Match was allredy removed", Toast.LENGTH_SHORT).show();
+							}
+
 						}
 
 					});
@@ -571,7 +595,6 @@ public class PlayerActivity extends FragmentActivity {
 							Intent it = new Intent(ctx, TimeDetails.class);
 							it.putExtra("data", userData.get("times").get(position));
 							getActivity().startActivityForResult(it, 2);
-							
 						}
 					});
 				}

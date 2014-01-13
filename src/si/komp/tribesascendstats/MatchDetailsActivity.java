@@ -10,6 +10,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import si.komp.tribesascendstats.adapters.DetailsAdapter;
 
 import android.net.ConnectivityManager;
@@ -49,6 +51,18 @@ public class MatchDetailsActivity extends Activity {
 				finish();
 			}	
 	}
+	
+	@Override
+	public void onStart() {
+	    super.onStart();
+	    EasyTracker.getInstance(this).activityStart(this);
+	  }
+
+	@Override
+	public void onStop() {
+	    super.onStop();
+	    EasyTracker.getInstance(this).activityStop(this);
+	  }
 	
 	private void asyncDownloadData(){
 		DownloadWebPageTask task = new DownloadWebPageTask();

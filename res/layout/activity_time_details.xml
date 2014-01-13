@@ -9,23 +9,6 @@
     tools:context=".TimeDetails" >
 
     <TextView
-        android:id="@+id/timeClassNameDetails"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <ListView
-        android:id="@+id/detailsTimeClasses"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/timeClassNameDetails" >
-    </ListView>
-
-    <TextView
         android:id="@+id/timeClasstimeDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,5 +17,35 @@
         android:layout_alignParentRight="true"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ImageView
+        android:id="@+id/timeTimeDetailsImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/timeClasstimeDetails"
+        android:adjustViewBounds="true"
+        android:maxHeight="40dp"
+        android:maxWidth="40dp"
+        android:src="@drawable/brute" />
+
+    <ListView
+        android:id="@+id/detailsTimeClasses"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/timeTimeDetailsImage" >
+
+    </ListView>
+
+    <TextView
+        android:id="@+id/timeClassNameDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/timeTimeDetailsImage"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>
