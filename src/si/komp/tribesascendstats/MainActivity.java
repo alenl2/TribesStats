@@ -84,15 +84,18 @@ public class MainActivity extends Activity {
 	public void goToPlayer(){
 		if(isNetworkAvailable()){
 			EditText txt = (EditText) findViewById(R.id.editText1);
-			
-			SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-			SharedPreferences.Editor editor = sharedPref.edit();
-			editor.putString(getString(R.string.name), txt.getText().toString());
-			editor.commit();
-			Intent intent = new Intent(ctx, PlayerActivity.class);
+			if(txt.getText().equals("") == false){
+				SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+				SharedPreferences.Editor editor = sharedPref.edit();
+				editor.putString(getString(R.string.name), txt.getText().toString());
+				editor.commit();
+				Intent intent = new Intent(ctx, PlayerActivity.class);
 
-	    	intent.putExtra("userName", txt.getText().toString());
-	    	startActivity(intent);
+		    	intent.putExtra("userName", txt.getText().toString());
+		    	startActivity(intent);
+			} else {
+				Toast.makeText(ctx, "Invalid player name", Toast.LENGTH_SHORT).show();
+			}
 		} else {
 			Toast.makeText(ctx, "No internet access", Toast.LENGTH_SHORT).show();
 		}
