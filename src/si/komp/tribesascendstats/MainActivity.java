@@ -84,7 +84,7 @@ public class MainActivity extends Activity {
 	public void goToPlayer(){
 		if(isNetworkAvailable()){
 			EditText txt = (EditText) findViewById(R.id.editText1);
-			if(txt.getText().equals("") == false){
+			if(txt.getText().toString().equals("") == false){
 				SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 				SharedPreferences.Editor editor = sharedPref.edit();
 				editor.putString(getString(R.string.name), txt.getText().toString());
