@@ -69,7 +69,6 @@ public class PlayerActivity extends FragmentActivity {
 	
 	public static HashMap<String, ArrayList<HashMap<String, String>>> userData;
 	       
-	int oldConfigInt;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

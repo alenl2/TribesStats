@@ -13,8 +13,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
- 
-
 public class Adapter extends BaseAdapter {
 	private Activity activity;
     private ArrayList<HashMap<String, String>> data;

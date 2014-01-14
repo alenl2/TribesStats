@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import si.komp.tribesascendstats.adapters.Adapter;
 import android.app.Activity;
 import android.content.Context;
@@ -33,8 +35,7 @@ public class TimeDetails extends Activity {
 		ctx = this;
 		@SuppressWarnings("unchecked")
 		HashMap<String, String> details = (HashMap<String, String>) intent.getSerializableExtra("data");
-		
-		
+
 		TextView tv1 = (TextView) findViewById(R.id.timeClassNameDetails);
 		TextView tv2 = (TextView) findViewById(R.id.timeClasstimeDetails);
 		setTitle(details.get("name") + " class usage");
@@ -68,40 +69,38 @@ public class TimeDetails extends Activity {
 			}
 		});
 		
-		
-	      ImageView viewb = (ImageView) findViewById(R.id.timeTimeDetailsImage);
+       ImageView viewb = (ImageView) findViewById(R.id.timeTimeDetailsImage);
 
-	        
-			if(details.get("name").contains("Brute")){
-				viewb.setImageResource(R.drawable.brute);
-			}
-			if(details.get("name").contains("Doombringer")){
-				viewb.setImageResource(R.drawable.doombringer);
-			}
-			if(details.get("name").contains("Infiltrator")){
-				viewb.setImageResource(R.drawable.infiltrator);
-			}
-			if(details.get("name").contains("Juggernaught")){
-				viewb.setImageResource(R.drawable.juggernaught);
-			}
-			if(details.get("name").contains("n. pathfinder")){
-				viewb.setImageResource(R.drawable.pathfinder);
-			}
-			if(details.get("name").contains("Pathfinder")){
-				viewb.setImageResource(R.drawable.pathfinder);
-			}
-			if(details.get("name").contains("Raider")){
-				viewb.setImageResource(R.drawable.raider);
-			}
-			if(details.get("name").contains("Sentinel")){
-				viewb.setImageResource(R.drawable.sentinel);
-			}
-			if(details.get("name").contains("Soldier")){
-				viewb.setImageResource(R.drawable.soldier);
-			}
-			if(details.get("name").contains("Technician")){
-				viewb.setImageResource(R.drawable.technician);
-			}
+		if(details.get("name").contains("Brute")){
+			viewb.setImageResource(R.drawable.brute);
+		}
+		if(details.get("name").contains("Doombringer")){
+			viewb.setImageResource(R.drawable.doombringer);
+		}
+		if(details.get("name").contains("Infiltrator")){
+			viewb.setImageResource(R.drawable.infiltrator);
+		}
+		if(details.get("name").contains("Juggernaught")){
+			viewb.setImageResource(R.drawable.juggernaught);
+		}
+		if(details.get("name").contains("n. pathfinder")){
+			viewb.setImageResource(R.drawable.pathfinder);
+		}
+		if(details.get("name").contains("Pathfinder")){
+			viewb.setImageResource(R.drawable.pathfinder);
+		}
+		if(details.get("name").contains("Raider")){
+			viewb.setImageResource(R.drawable.raider);
+		}
+		if(details.get("name").contains("Sentinel")){
+			viewb.setImageResource(R.drawable.sentinel);
+		}
+		if(details.get("name").contains("Soldier")){
+			viewb.setImageResource(R.drawable.soldier);
+		}
+		if(details.get("name").contains("Technician")){
+			viewb.setImageResource(R.drawable.technician);
+		}
 	}
 
 	@Override
@@ -128,6 +127,18 @@ public class TimeDetails extends Activity {
 		}
 		
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	public void onStart() {
+	    super.onStart();
+	    EasyTracker.getInstance(this).activityStart(this);
+	}
+
+	@Override
+	public void onStop() {
+	    super.onStop();
+	    EasyTracker.getInstance(this).activityStop(this);
 	}
 
 }
