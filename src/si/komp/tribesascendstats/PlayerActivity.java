@@ -66,6 +66,7 @@ public class PlayerActivity extends FragmentActivity {
 	static Context ctx;
 	static String viewState = "";
 	static boolean flag = true;
+	
 	public static HashMap<String, ArrayList<HashMap<String, String>>> userData;
 	       
 	int oldConfigInt;

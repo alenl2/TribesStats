@@ -89,9 +89,12 @@ public class MainActivity extends Activity {
 				SharedPreferences.Editor editor = sharedPref.edit();
 				editor.putString(getString(R.string.name), txt.getText().toString());
 				editor.commit();
+				
+				PlayerActivity.flag = true;
 				Intent intent = new Intent(ctx, PlayerActivity.class);
-
 		    	intent.putExtra("userName", txt.getText().toString());
+		    	
+		    	
 		    	startActivity(intent);
 			} else {
 				Toast.makeText(ctx, "Invalid player name", Toast.LENGTH_SHORT).show();
