@@ -32,9 +32,9 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class MatchDetailsActivity extends Activity {
 	
-	String detailsLink;
-	Context ctx;
-	String appTitle ="";
+	private String detailsLink;
+	private Context ctx;
+	private String appTitle ="";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -66,7 +66,7 @@ public class MatchDetailsActivity extends Activity {
 	
 	private void asyncDownloadData(){
 		DownloadWebPageTask task = new DownloadWebPageTask();
-		task.execute(new String[] { PlayerActivity.url + PlayerActivity.user });
+		task.execute(PlayerActivity.url + PlayerActivity.user);
 	}
 	
 	@Override
@@ -98,7 +98,7 @@ public class MatchDetailsActivity extends Activity {
 	}
 	
 	private class DownloadWebPageTask extends AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
-		private ProgressDialog dialog = new ProgressDialog(ctx);
+		private final ProgressDialog dialog = new ProgressDialog(ctx);
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
@@ -119,6 +119,7 @@ public class MatchDetailsActivity extends Activity {
 							return ret;
 						}
 					} catch (Exception e) {
+                        e.printStackTrace();
 					}
 					
 					appTitle = document.title();

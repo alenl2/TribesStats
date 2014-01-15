@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-	static Context ctx;
+	private static Context ctx;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
 	    EasyTracker.getInstance(this).activityStop(this);
 	  }
 	
-	private OnEditorActionListener onEditorActionListener = new OnEditorActionListener() {
+	private final OnEditorActionListener onEditorActionListener = new OnEditorActionListener() {
 		
 		@Override
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -65,7 +65,7 @@ public class MainActivity extends Activity {
 	};
 	
 
-	private OnClickListener onClickListener = new OnClickListener() {
+	private final OnClickListener onClickListener = new OnClickListener() {
 	    @Override
 	    public void onClick(final View v) {
 	        switch(v.getId()){
@@ -81,10 +81,10 @@ public class MainActivity extends Activity {
 	    return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 	}
 	
-	public void goToPlayer(){
+	void goToPlayer(){
 		if(isNetworkAvailable()){
 			EditText txt = (EditText) findViewById(R.id.editText1);
-			if(txt.getText().toString().equals("") == false){
+			if(!txt.getText().toString().equals("")){
 				SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 				SharedPreferences.Editor editor = sharedPref.edit();
 				editor.putString(getString(R.string.name), txt.getText().toString());

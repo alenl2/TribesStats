@@ -19,14 +19,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class RecentAdapter extends BaseAdapter {
-	private Activity activity;
-	private ArrayList<HashMap<String, String>> data;
+	private final ArrayList<HashMap<String, String>> data;
 	private static LayoutInflater inflater = null;
 
 	public RecentAdapter(Activity a, ArrayList<HashMap<String, String>> d) {
-		activity = a;
 		data = d;
-		inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		inflater = (LayoutInflater) a.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
 	public int getCount() {
@@ -141,11 +139,11 @@ public class RecentAdapter extends BaseAdapter {
 		int[] imgs = new int[] { R.id.Image1, R.id.Image2, R.id.Image3,
 				R.id.Image4, R.id.Image5, R.id.Image6, R.id.Image7,
 				R.id.Image8, R.id.image9 };
-		
-		for(int i=0;i<imgs.length;i++){
-			ImageView view = (ImageView) vi.findViewById(imgs[i]);
-			view.setImageDrawable(null);
-		}
+
+        for (int img : imgs) {
+            ImageView view = (ImageView) vi.findViewById(img);
+            view.setImageDrawable(null);
+        }
 		int curImg = 0;
 		for (String classPlayed : classes.split(",")) {
 			ImageView view = (ImageView) vi.findViewById(imgs[curImg]);

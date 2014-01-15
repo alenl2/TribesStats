@@ -44,30 +44,14 @@ import android.widget.Toast;
 
 public class PlayerActivity extends FragmentActivity {
 
-	/**
-	 * The {@link android.support.v4.view.PagerAdapter} that will provide
-	 * fragments for each of the sections. We use a
-	 * {@link android.support.v4.app.FragmentPagerAdapter} derivative, which
-	 * will keep every loaded fragment in memory. If this becomes too memory
-	 * intensive, it may be best to switch to a
-	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-	 */
-	SectionsPagerAdapter mSectionsPagerAdapter;
-
-	/**
-	 * The {@link ViewPager} that will host the section contents.
-	 */
-	ViewPager mViewPager;
-
-	public static String url = "https://account.hirezstudios.com/tribesascend/stats.aspx?player=";
+    public static final String url = "https://account.hirezstudios.com/tribesascend/stats.aspx?player=";
 	public static String user;
 
-	static View playerSum = null;
-	static Context ctx;
+	private static Context ctx;
 	static String viewState = "";
 	static boolean flag = true;
 	
-	public static HashMap<String, ArrayList<HashMap<String, String>>> userData;
+	private static HashMap<String, ArrayList<HashMap<String, String>>> userData;
 	       
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +60,7 @@ public class PlayerActivity extends FragmentActivity {
 		ctx = this;
 
 		Intent intent = getIntent();
-		String userID = intent.getStringExtra("userName");
-		user = userID;
+		user = intent.getStringExtra("userName");
 		
 		
 		
@@ -112,8 +95,7 @@ public class PlayerActivity extends FragmentActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 1) {
 			if (resultCode == RESULT_OK) {
-				String result = data.getStringExtra("showUser");
-				user = result;
+				user = data.getStringExtra("showUser");
 				asyncDownloadData();
 			}
 		}
@@ -128,7 +110,7 @@ public class PlayerActivity extends FragmentActivity {
 	void asyncDownloadData() {
 		if (isNetworkAvailable()) {
 			DownloadPage task = new DownloadPage();
-			task.execute(new String[] { url + user });
+			task.execute(url + user);
 		} else {
 			Toast.makeText(ctx, "No internet access", Toast.LENGTH_SHORT).show();
 			finish();
@@ -144,7 +126,7 @@ public class PlayerActivity extends FragmentActivity {
 	}
 
 	public class DownloadPage extends AsyncTask<String, Void, HashMap<String, ArrayList<HashMap<String, String>>>> {
-		private ProgressDialog dialog = new ProgressDialog(ctx);
+		private final ProgressDialog dialog = new ProgressDialog(ctx);
 
 		@Override
 		protected void onPreExecute() {
@@ -167,6 +149,7 @@ public class PlayerActivity extends FragmentActivity {
 							return ret;
 						}
 					} catch (Exception e) {
+                        e.printStackTrace();
 					}
 
 					try {
@@ -434,7 +417,7 @@ public class PlayerActivity extends FragmentActivity {
 					// TIME PLAYED
 					// TODO this to tab3
 					try {
-						Elements statsTab = doc.getElementById("statsTab").getAllElements();
+						Elements statsTab = doc.getElementById("tabs").getElementById("statsTab").getAllElements();
 						
 						ArrayList<HashMap<String, String>> times = new ArrayList<HashMap<String, String>>();
 						
@@ -442,6 +425,9 @@ public class PlayerActivity extends FragmentActivity {
 						
 						for (Element tab : statsTab) {
 							if (tab.hasAttr("id")) {
+                                if(!tab.attr("id").equals("panelMap")){
+                                    continue;
+                                }
 								HashMap<String, String> toAdd = new HashMap<String, String>();
 								try {
 									String currentClass = tab.getElementById("lblTimePlayedClass").html();
@@ -491,8 +477,19 @@ public class PlayerActivity extends FragmentActivity {
 				try {
 					setTitle("Stats for:" + result.get("playerSum").get(0).get("value") + " - Level:" + result.get("playerSum").get(1).get("value"));
 					userData = result;
-					mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-					mViewPager = (ViewPager) findViewById(R.id.pager);
+					/*
+	  The {@link android.support.v4.view.PagerAdapter} that will provide
+	  fragments for each of the sections. We use a
+	  {@link android.support.v4.app.FragmentPagerAdapter} derivative, which
+	  will keep every loaded fragment in memory. If this becomes too memory
+	  intensive, it may be best to switch to a
+	  {@link android.support.v4.app.FragmentStatePagerAdapter}.
+	 */
+                    SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+					/*
+	  The {@link ViewPager} that will host the section contents.
+	 */
+                    ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
 					mViewPager.setAdapter(mSectionsPagerAdapter);
 					if (dialog.isShowing()) {
 						dialog.dismiss();
@@ -589,7 +586,7 @@ public class PlayerActivity extends FragmentActivity {
 					lw.setOnItemClickListener(new OnItemClickListener() {
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-							if(userData.get("recent").get(position).get("matchDetails").equals("NoDetails!!!") == false){
+							if(!userData.get("recent").get(position).get("matchDetails").equals("NoDetails!!!")){
 								Intent intent = new Intent(ctx, MatchDetailsActivity.class);
 								intent.putExtra("matchDetails", userData.get("recent").get(position).get("matchDetails"));
 								getActivity().startActivityForResult(intent, 1);	

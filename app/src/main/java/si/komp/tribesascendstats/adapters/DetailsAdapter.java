@@ -11,20 +11,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
  
 
 public class DetailsAdapter extends BaseAdapter {
-	private Activity activity;
-    private ArrayList<HashMap<String, String>> data;
+    private final ArrayList<HashMap<String, String>> data;
     private static LayoutInflater inflater=null; 
  
     public DetailsAdapter(Activity a, ArrayList<HashMap<String, String>> d) {
-        activity = a;
         data=d;
-        inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = (LayoutInflater)a.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
  
     public int getCount() {
@@ -54,7 +51,7 @@ public class DetailsAdapter extends BaseAdapter {
         		continue;
         	}
         	if(key.startsWith("Pathfinder")){
-        		((LinearLayout)vi.findViewById(R.id.layout1)).setVisibility(0);
+        		vi.findViewById(R.id.layout1).setVisibility(View.VISIBLE);
         		((TextView)vi.findViewById(R.id.playerClass1)).setText("Pathfinder");
         		if(key.contains("ClassDemage")){
         			((TextView)vi.findViewById(R.id.playerDemage1)).setText(dat.get(key));
@@ -67,7 +64,7 @@ public class DetailsAdapter extends BaseAdapter {
         		}
         	}
         	if(key.startsWith("Soldier")){
-        		((LinearLayout)vi.findViewById(R.id.layout2)).setVisibility(0);
+        		vi.findViewById(R.id.layout2).setVisibility(View.VISIBLE);
         		((TextView)vi.findViewById(R.id.playerClass2)).setText("Soldier");
         		if(key.contains("ClassDemage")){
         			((TextView)vi.findViewById(R.id.playerDemage2)).setText(dat.get(key));
@@ -80,7 +77,7 @@ public class DetailsAdapter extends BaseAdapter {
         		}
         	}
         	if(key.startsWith("Brute")){
-        		((LinearLayout)vi.findViewById(R.id.layout3)).setVisibility(0);
+        		vi.findViewById(R.id.layout3).setVisibility(View.VISIBLE);
         		((TextView)vi.findViewById(R.id.playerClass3)).setText("Brute");
         		if(key.contains("ClassDemage")){
         			((TextView)vi.findViewById(R.id.playerDemage3)).setText(dat.get(key));
@@ -93,7 +90,7 @@ public class DetailsAdapter extends BaseAdapter {
         		}
         	}
         	if(key.startsWith("Sentinel")){
-        		((LinearLayout)vi.findViewById(R.id.layout4)).setVisibility(0);
+        		vi.findViewById(R.id.layout4).setVisibility(View.VISIBLE);
         		((TextView)vi.findViewById(R.id.playerClass4)).setText("Sentinel");
         		if(key.contains("ClassDemage")){
         			((TextView)vi.findViewById(R.id.playerDemage4)).setText(dat.get(key));
@@ -106,7 +103,7 @@ public class DetailsAdapter extends BaseAdapter {
         		}
         	}
         	if(key.startsWith("Juggernaught")){
-        		((LinearLayout)vi.findViewById(R.id.layout5)).setVisibility(0);
+        		vi.findViewById(R.id.layout5).setVisibility(View.VISIBLE);
         		((TextView)vi.findViewById(R.id.playerClass5)).setText("Juggernaught");
         		if(key.contains("ClassDemage")){
         			((TextView)vi.findViewById(R.id.playerDemage5)).setText(dat.get(key));
@@ -119,7 +116,7 @@ public class DetailsAdapter extends BaseAdapter {
         		}
         	}
         	if(key.startsWith("Technician")){
-        		((LinearLayout)vi.findViewById(R.id.layout6)).setVisibility(0);
+        		vi.findViewById(R.id.layout6).setVisibility(View.VISIBLE);
         		((TextView)vi.findViewById(R.id.playerClass6)).setText("Technician");
         		if(key.contains("ClassDemage")){
         			((TextView)vi.findViewById(R.id.playerDemage6)).setText(dat.get(key));
@@ -132,7 +129,7 @@ public class DetailsAdapter extends BaseAdapter {
         		}
         	}
         	if(key.startsWith("Raider")){
-        		((LinearLayout)vi.findViewById(R.id.layout7)).setVisibility(0);
+        		vi.findViewById(R.id.layout7).setVisibility(View.VISIBLE);
         		((TextView)vi.findViewById(R.id.playerClass7)).setText("Raider");
         		if(key.contains("ClassDemage")){
         			((TextView)vi.findViewById(R.id.playerDemage7)).setText(dat.get(key));
@@ -145,7 +142,7 @@ public class DetailsAdapter extends BaseAdapter {
         		}
         	}
         	if(key.startsWith("Infiltrator")){
-        		((LinearLayout)vi.findViewById(R.id.layout8)).setVisibility(0);
+        		vi.findViewById(R.id.layout8).setVisibility(View.VISIBLE);
         		((TextView)vi.findViewById(R.id.playerClass8)).setText("Infiltrator");
         		if(key.contains("ClassDemage")){
         			((TextView)vi.findViewById(R.id.playerDemage8)).setText(dat.get(key));
@@ -158,7 +155,7 @@ public class DetailsAdapter extends BaseAdapter {
         		}
         	}
         	if(key.startsWith("Doombringer")){
-        		((LinearLayout)vi.findViewById(R.id.layout9)).setVisibility(0);
+        		vi.findViewById(R.id.layout9).setVisibility(View.VISIBLE);
         		((TextView)vi.findViewById(R.id.playerClass9)).setText("Doombringer");
         		if(key.contains("ClassDemage")){
         			((TextView)vi.findViewById(R.id.playerDemage9)).setText(dat.get(key));

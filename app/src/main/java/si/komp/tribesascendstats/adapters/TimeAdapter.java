@@ -14,14 +14,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class TimeAdapter extends BaseAdapter {
-	private Activity activity;
-    private ArrayList<HashMap<String, String>> data;
+    private final ArrayList<HashMap<String, String>> data;
     private static LayoutInflater inflater=null; 
  
     public TimeAdapter(Activity a, ArrayList<HashMap<String, String>> d) {
-        activity = a;
         data=d;
-        inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = (LayoutInflater)a.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
  
     public int getCount() {

@@ -23,9 +23,9 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class TimeDetails extends Activity {
-	Context ctx;
+	private Context ctx;
 	
-	ArrayList<HashMap<String, String>> toPass;
+	private ArrayList<HashMap<String, String>> toPass;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,7 +38,7 @@ public class TimeDetails extends Activity {
 
 		TextView tv1 = (TextView) findViewById(R.id.timeClassNameDetails);
 		TextView tv2 = (TextView) findViewById(R.id.timeClasstimeDetails);
-		setTitle(details.get("name") + " class usage");
+		setTitle((details != null ? details.get("name") : null) + " class usage");
 		tv1.setText(details.get("name"));
 		tv2.setText(details.get("timeForClass") + " mins");
 		

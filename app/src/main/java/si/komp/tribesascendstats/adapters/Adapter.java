@@ -14,14 +14,12 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 public class Adapter extends BaseAdapter {
-	private Activity activity;
-    private ArrayList<HashMap<String, String>> data;
+    final private ArrayList<HashMap<String, String>> data;
     private static LayoutInflater inflater=null; 
  
     public Adapter(Activity a, ArrayList<HashMap<String, String>> d) {
-        activity = a;
         data=d;
-        inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = (LayoutInflater)a.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
  
     public int getCount() {

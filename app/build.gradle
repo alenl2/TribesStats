@@ -9,9 +9,20 @@ android {
         targetSdkVersion 19
     }
 
+    signingConfigs {
+        release {
+            storeFile file("release.keystore")
+            storePassword "..."
+            keyAlias "..."
+            keyPassword "..."
+        }
+    }
+
     buildTypes {
         release {
+            debuggable false
             runProguard false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }

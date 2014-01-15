@@ -16,19 +16,16 @@
     <string name="Kills">Kills</string>
     <string name="KD">K:D</string>
     <string name="Deaths">Deaths</string>
-    <string name="Score"></string>
     <string name="Assists">Assists</string>
     <string name="TimePlayed">Time Played</string>
     <string name="mapNameDisc">Map Name</string>
     <string name="classPic">Class</string>
-    <string name="soon">Soon</string>
     <string name="score">Score</string>
     <string name="classs">"Class: "</string>
     <string name="dmg">"    Dmg: "</string>
     <string name="kills">"    K: "</string>
     <string name="time">"    Time: "</string>
     <string name="title_activity_time_details">TimeDetails</string>
-    <string name="hello_world">Hello world!</string>
     <string name="imgForViewClass">image for viewd class</string>
 
 </resources>
