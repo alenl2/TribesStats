@@ -20,7 +20,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/search"
-            android:textAppearance="@android:style/TextAppearance.Large" />
+            android:textAppearance="@android:style/TextAppearance.Large"
+            android:layout_margin="10dp" />
 
         <EditText
             android:id="@+id/editText1"
@@ -29,7 +30,8 @@
             android:ems="10"
             android:inputType="textNoSuggestions"
             android:selectAllOnFocus="true"
-            android:singleLine="true" >
+            android:singleLine="true"
+            android:layout_margin="10dp">
 
             <requestFocus />
         </EditText>
@@ -38,7 +40,8 @@
             android:id="@+id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/Submit" />
+            android:text="@string/Submit"
+            android:layout_margin="10dp" />
 
         <ImageView
             android:id="@+id/timageTimeDetails"
@@ -47,8 +50,7 @@
             android:baselineAlignBottom="false"
             android:contentDescription="@string/back"
             android:cropToPadding="false"
-            android:src="@drawable/attachment"
-            android:layout_marginTop="50dp" />
+            android:src="@drawable/attachment" />
     </LinearLayout>
 
 </RelativeLayout>
