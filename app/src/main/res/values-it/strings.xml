@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tribes Ascend Stats</string>
+    <string name="Assists">Assist</string>
+    <string name="Deaths">Morti</string>
+    <string name="KD">K/D</string>
+    <string name="Kills">Kill</string>
+    <string name="MapPlayTime">Tempo di gioco della mappa</string>
+    <string name="Submit">Vai</string>
+    <string name="TimePlayed">Tempo giocato</string>
+    <string name="action_settings">Aggiorna</string>
+    <string name="title_section1">Sommario giocatore</string>
+    <string name="title_section2">Partite recenti</string>
+    <string name="title_section3">Tempo giocato</string>
+    <string name="search">Cerca un giocatore</string>
+    <string name="time">, tempo:</string>
+    <string name="kills">, kill: </string>
+    <string name="score">Punteggio</string>
+    <string name="classs">Class: </string>
+    <string name="title_activity_match_details">Dettagli partita</string>
+    <string name="title_activity_time_details">Dettagli tempo</string>
+    <string name="dmg">, danni: </string>
+    <string name="mapNameDisc">Nome della mappa</string>
+    <string name="mapName">Nome mappa</string>
+    <string name="imgForViewClass">Immagine della classe</string>
+    <string name="classPic">Classe</string>
+    <string name="back">Sfondo di Tribes</string>
+</resources>
