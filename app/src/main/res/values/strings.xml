@@ -7,7 +7,7 @@
     <string name="title_section2">Recent Matches</string>
     <string name="title_section3">Time Played</string>
     <string name="title_activity_match_details">MatchDetails</string>
-    <string name="name" />
+    <string name="name" translatable="false" />
     <string name="Submit">Submit</string>
     <string name="search">Search for a player</string>
     <string name="back">Tribes background</string>
