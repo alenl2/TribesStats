@@ -14,7 +14,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +28,7 @@ public class TimeDetails extends Activity {
     private Context ctx;
 
     private ArrayList<HashMap<String, String>> toPass;
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +105,9 @@ public class TimeDetails extends Activity {
         if (details.get("name").contains("Technician")) {
             viewb.setImageResource(R.drawable.technician);
         }
+
+        TribesStats application = (TribesStats) getApplication();
+        mTracker = application.getDefaultTracker();
     }
 
     @Override
@@ -132,16 +137,14 @@ public class TimeDetails extends Activity {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        EasyTracker.getInstance(this).activityStart(this);
+    protected void onResume() {
+        super.onResume();
+        if(mTracker!=null){
+            mTracker.setScreenName("PlayerActivity");
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        EasyTracker.getInstance(this).activityStop(this);
-    }
 
 }
 

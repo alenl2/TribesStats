@@ -24,7 +24,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -50,6 +51,7 @@ public class PlayerActivity extends FragmentActivity {
     static boolean flag = true;
     private static Context ctx;
     private static HashMap<String, ArrayList<HashMap<String, String>>> userData;
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,28 +66,25 @@ public class PlayerActivity extends FragmentActivity {
         if (flag) {
             asyncDownloadData();
         }
+
+        TribesStats application = (TribesStats) getApplication();
+        mTracker = application.getDefaultTracker();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mTracker!=null){
+            mTracker.setScreenName("PlayerActivity");
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
     }
 
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        // TODO Auto-generated method stub
         flag = false;
         super.onConfigurationChanged(newConfig);
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        EasyTracker.getInstance(this).activityStart(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EasyTracker.getInstance(this).activityStop(this);
     }
 
     @Override

@@ -16,7 +16,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.jsoup.Connection.Method;
 import org.jsoup.Jsoup;
@@ -35,6 +36,7 @@ public class MatchDetailsActivity extends Activity {
     private String detailsLink;
     private Context ctx;
     private String appTitle = "";
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,18 +53,19 @@ public class MatchDetailsActivity extends Activity {
             Toast.makeText(ctx, "No internet access", Toast.LENGTH_SHORT).show();
             finish();
         }
+
+        TribesStats application = (TribesStats) getApplication();
+        mTracker = application.getDefaultTracker();
+
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        EasyTracker.getInstance(this).activityStart(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EasyTracker.getInstance(this).activityStop(this);
+    protected void onResume() {
+        super.onResume();
+        if(mTracker!=null){
+            mTracker.setScreenName("MatchDetailsActivity");
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
     }
 
     private void asyncDownloadData() {

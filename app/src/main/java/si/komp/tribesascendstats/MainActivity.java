@@ -17,11 +17,14 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 public class MainActivity extends Activity {
 
     private static Context ctx;
+    private Tracker mTracker;
+
     private final OnEditorActionListener onEditorActionListener = new OnEditorActionListener() {
 
         @Override
@@ -60,18 +63,18 @@ public class MainActivity extends Activity {
         edittext.setText(name);
         edittext.setSelectAllOnFocus(true);
 
+        TribesStats application = (TribesStats) getApplication();
+        mTracker = application.getDefaultTracker();
+
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        EasyTracker.getInstance(this).activityStart(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EasyTracker.getInstance(this).activityStop(this);
+    protected void onResume() {
+        super.onResume();
+        if(mTracker != null ){
+            mTracker.setScreenName("MainActivity");
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
     }
 
     private boolean isNetworkAvailable() {
