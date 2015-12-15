@@ -17,8 +17,7 @@ public class TribesStats extends Application  {
     synchronized public Tracker getDefaultTracker() {
         if (mTracker == null) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            //TODO: get google-services.json uncomment this
-            //mTracker = analytics.newTracker(R.xml.global_tracker);
+            mTracker = analytics.newTracker(R.xml.global_tracker);
         }
         return mTracker;
     }
