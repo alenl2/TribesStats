@@ -14,26 +14,17 @@ android {
         multiDexEnabled true
     }
 
-    signingConfigs {
-        release {
-            storeFile file("release.keystore")
-            storePassword "..."
-            keyAlias "..."
-            keyPassword "..."
-        }
-    }
-
     buildTypes {
         debug {
             debuggable true
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
         release {
             debuggable false
-            minifyEnabled true
-            signingConfig signingConfigs.release
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            minifyEnabled false
+            lintOptions {
+                disable 'MissingTranslation'
+            }
         }
     }
 }
