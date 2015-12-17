@@ -74,7 +74,7 @@ public class PlayerActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(mTracker!=null){
+        if (mTracker != null) {
             mTracker.setScreenName("PlayerActivity");
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         }
@@ -242,9 +242,9 @@ public class PlayerActivity extends FragmentActivity {
                 try {
                     Document doc = Jsoup.connect(url).get();
                     try {
-                        if (doc.getElementById("lblError").html().contains("No player")) {
+                        Element element = doc.getElementById("lblError");
+                        if (element != null && element.html().contains("No player"))
                             return ret;
-                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -566,7 +566,9 @@ public class PlayerActivity extends FragmentActivity {
                 }
             }
             return ret;
-        }        private final ProgressDialog dialog = new ProgressDialog(ctx);
+        }
+
+        private final ProgressDialog dialog = new ProgressDialog(ctx);
 
         @Override
         protected void onPostExecute(HashMap<String, ArrayList<HashMap<String, String>>> result) {
@@ -583,8 +585,8 @@ public class PlayerActivity extends FragmentActivity {
 	  {@link android.support.v4.app.FragmentStatePagerAdapter}.
 	 */
                     SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-					/*
-	  The {@link ViewPager} that will host the section contents.
+                    /*
+      The {@link ViewPager} that will host the section contents.
 	 */
                     ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
                     mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -601,8 +603,6 @@ public class PlayerActivity extends FragmentActivity {
             }
 
         }
-
-
 
 
     }
