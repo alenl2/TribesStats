@@ -47,6 +47,10 @@ public class MainActivity extends Activity {
         }
     };
 
+    /**
+     * To be applied on the main AutoCompleteTextView
+     * "When it will be focused, the listener will show the dropdown menu with the suggestions
+     */
     private final View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View view, boolean hasFocus) {
@@ -105,7 +109,7 @@ public class MainActivity extends Activity {
         if (isNetworkAvailable()) {
             String username = inputText.getText().toString();
             if (username.isEmpty()) {
-                Toast.makeText(this, "Invalid player name", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.invalid_player_name), Toast.LENGTH_SHORT).show();
             } else {
                 historyManager.addUser(username);
 
@@ -116,7 +120,7 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         } else {
-            Toast.makeText(this, "No internet access", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.no_internet_access), Toast.LENGTH_SHORT).show();
         }
     }
 

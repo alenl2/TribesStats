@@ -2,6 +2,7 @@ package si.komp.tribesascendstats.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +16,10 @@ import si.komp.tribesascendstats.R;
 
 public class Adapter extends BaseAdapter {
     private static LayoutInflater inflater = null;
-    final private ArrayList<HashMap<String, String>> data;
+    @NonNull
+    private final ArrayList<HashMap<String, String>> data;
 
-    public Adapter(Activity a, ArrayList<HashMap<String, String>> d) {
+    public Adapter(@NonNull Activity a, @NonNull ArrayList<HashMap<String, String>> d) {
         data = d;
         inflater = (LayoutInflater) a.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -39,11 +41,12 @@ public class Adapter extends BaseAdapter {
         if (convertView == null)
             vi = inflater.inflate(R.layout.list_row, null);
 
-        TextView text1 = (TextView) vi.findViewById(R.id.text1); // title
-        TextView text2 = (TextView) vi.findViewById(R.id.text2); // artist name
-
         HashMap<String, String> dat = data.get(position);
+
+        TextView text1 = (TextView) vi.findViewById(R.id.text1);
         text1.setText(dat.get("name"));
+
+        TextView text2 = (TextView) vi.findViewById(R.id.text2);
         text2.setText(dat.get("value"));
 
         return vi;

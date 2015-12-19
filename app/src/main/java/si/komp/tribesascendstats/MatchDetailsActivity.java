@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,16 +33,16 @@ import java.util.Iterator;
 import si.komp.tribesascendstats.adapters.DetailsAdapter;
 
 public class MatchDetailsActivity extends Activity {
-
     private String detailsLink;
-    private Context ctx;
-    private String appTitle = "";
+    @NonNull
+    private final Context ctx = this;
+    @NonNull
+    private String matchId = "";
     private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ctx = this;
         setContentView(R.layout.activity_main_match);
 
         Intent intent = getIntent();
@@ -50,7 +51,7 @@ public class MatchDetailsActivity extends Activity {
         if (isNetworkAvailable()) {
             asyncDownloadData();
         } else {
-            Toast.makeText(ctx, "No internet access", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ctx, getResources().getString(R.string.no_internet_access), Toast.LENGTH_SHORT).show();
             finish();
         }
 
@@ -62,7 +63,7 @@ public class MatchDetailsActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(mTracker!=null){
+        if (mTracker != null) {
             mTracker.setScreenName("MatchDetailsActivity");
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         }
@@ -106,7 +107,7 @@ public class MatchDetailsActivity extends Activity {
         protected void onPreExecute() {
             super.onPreExecute();
             this.dialog.setCancelable(false);
-            this.dialog.setMessage("Please wait. Downloading data.");
+            this.dialog.setMessage(getResources().getString(R.string.downloading_data));
             this.dialog.show();
         }
 
@@ -118,14 +119,18 @@ public class MatchDetailsActivity extends Activity {
                     Document document = Jsoup.connect(url).data("__VIEWSTATE", PlayerActivity.viewState).data(detailsLink, "Match Details").method(Method.POST).post();
 
                     try {
-                        if (document.getElementById("lblError").html().contains("No matches")) {
+                        Element element = document.getElementById("lblError");
+                        if (element != null && element.html().contains("No matches")) {
                             return ret;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
-                    appTitle = document.title();
+                    try {
+                        matchId = document.title().replace("Tribes Match Details: ", "").trim();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     Element details = document.getElementById("detailsContent");
                     Elements players = details.getElementsByClass("detailsItemTemplateTable");
                     for (Element player : players) {
@@ -146,42 +151,53 @@ public class MatchDetailsActivity extends Activity {
                 }
             }
             return ret;
-        }        private final ProgressDialog dialog = new ProgressDialog(ctx);
+        }
+
+        private final ProgressDialog dialog = new ProgressDialog(ctx);
 
         @Override
         protected void onPostExecute(final ArrayList<HashMap<String, String>> result) {
-            if (result.size() != 0) {
+            if (result.size() == 0) {
+                Toast.makeText(ctx, getResources().getString(R.string.no_matches), Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
                 try {
-                    setTitle(appTitle);
+                    String titleFormat = getResources().getString(R.string.match_details_format);
+                    setTitle(String.format(titleFormat, matchId));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                try {
                     DetailsAdapter adapter = new DetailsAdapter((Activity) ctx, result);
-                    ListView lw = ((ListView) findViewById(R.id.listRecent));
-                    lw.setAdapter(adapter);
-                    // Click event for single list row
-                    lw.setOnItemClickListener(new OnItemClickListener() {
+
+                    OnItemClickListener onItemClickListener = new OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            Toast.makeText(ctx, "User " + result.get(position).get("name"), Toast.LENGTH_SHORT).show();
+                            String userName = result.get(position).get("name");
+                            String userText = String.format(getResources().getString(R.string.user_), userName);
+
+                            Toast.makeText(ctx, userText, Toast.LENGTH_SHORT).show();
                             Intent returnIntent = new Intent();
-                            returnIntent.putExtra("showUser", result.get(position).get("name"));
+                            returnIntent.putExtra("showUser", userName);
                             setResult(RESULT_OK, returnIntent);
                             finish();
                         }
+                    };
 
-                    });
+                    ListView lw = ((ListView) findViewById(R.id.listRecent));
+                    lw.setAdapter(adapter);
+                    lw.setOnItemClickListener(onItemClickListener);
+
                     if (dialog.isShowing()) {
                         dialog.dismiss();
                     }
                 } catch (Exception e) {
-                    Toast.makeText(ctx, "An error occurred. Check internet connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx, getResources().getString(R.string.internet_error), Toast.LENGTH_SHORT).show();
                     finish();
                 }
-            } else {
-                Toast.makeText(ctx, "No matches Found", Toast.LENGTH_SHORT).show();
-                finish();
             }
         }
-
-
 
 
     }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,13 +20,16 @@ import com.google.android.gms.analytics.Tracker;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
 import si.komp.tribesascendstats.adapters.Adapter;
 
 public class TimeDetails extends Activity {
-    private Context ctx;
+    @NonNull
+    private final Context ctx = this;
+
+    @NonNull
+    private final TribesUtils utils = new TribesUtils(this);
 
     private ArrayList<HashMap<String, String>> toPass;
     private Tracker mTracker;
@@ -36,75 +40,51 @@ public class TimeDetails extends Activity {
         setContentView(R.layout.activity_time_details);
         Intent intent = getIntent();
 
-        ctx = this;
         @SuppressWarnings("unchecked")
         HashMap<String, String> details = (HashMap<String, String>) intent.getSerializableExtra("data");
 
+        String className = details.get("name"), timeForClass = details.get("timeForClass");
+
+        String title = String.format(getResources().getString(R.string.class_usage_format), utils.translateClassName(className));
+        setTitle(title);
+
         TextView tv1 = (TextView) findViewById(R.id.timeClassNameDetails);
+        tv1.setText(className);
+
         TextView tv2 = (TextView) findViewById(R.id.timeClasstimeDetails);
-        setTitle((details != null ? details.get("name") : null) + " class usage");
-        tv1.setText(details.get("name"));
-        tv2.setText(details.get("timeForClass") + " mins");
+        String tv2Text = String.format(getResources().getString(R.string.minutes_short_format), timeForClass);
+        tv2.setText(tv2Text);
 
         toPass = new ArrayList<>();
 
         for (String key : details.keySet()) {
-            if (key.equals("name") || key.equals("timeForClass")) {
-                continue;
-            }
             if (key.startsWith("map-")) {
                 HashMap<String, String> ins = new HashMap<>();
                 ins.put("name", key.replace("map-", ""));
-                ins.put("value", details.get(key) + " mins");
+                ins.put("value", details.get(key));
                 toPass.add(ins);
             }
         }
 
-        Collections.sort(toPass, new CustomComparator());//this could be optimised to run when we are creating toPass hashmap
+        Collections.sort(toPass, new CustomMapComparator("value"));//this could be optimised to run when we are creating toPass hashmap
 
         Adapter adapter = new Adapter(this, toPass);
-        ListView lw = ((ListView) findViewById(R.id.detailsTimeClasses));
-        lw.setAdapter(adapter);
 
-        lw.setOnItemClickListener(new OnItemClickListener() {
+        OnItemClickListener onItemClickListener = new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(ctx, toPass.get(position).get("name") + " -- " + toPass.get(position).get("value"), Toast.LENGTH_SHORT).show();
+                String toastText = toPass.get(position).get("name") + " -- " + toPass.get(position).get("value");
+                Toast.makeText(ctx, toastText, Toast.LENGTH_SHORT).show();
             }
-        });
+        };
 
-        ImageView viewb = (ImageView) findViewById(R.id.timeTimeDetailsImage);
+        ListView lw = ((ListView) findViewById(R.id.detailsTimeClasses));
+        lw.setAdapter(adapter);
+        lw.setOnItemClickListener(onItemClickListener);
 
-        if (details.get("name").contains("Brute")) {
-            viewb.setImageResource(R.drawable.brute);
-        }
-        if (details.get("name").contains("Doombringer")) {
-            viewb.setImageResource(R.drawable.doombringer);
-        }
-        if (details.get("name").contains("Infiltrator")) {
-            viewb.setImageResource(R.drawable.infiltrator);
-        }
-        if (details.get("name").contains("Juggernaught")) {
-            viewb.setImageResource(R.drawable.juggernaught);
-        }
-        if (details.get("name").contains("n. pathfinder")) {
-            viewb.setImageResource(R.drawable.pathfinder);
-        }
-        if (details.get("name").contains("Pathfinder")) {
-            viewb.setImageResource(R.drawable.pathfinder);
-        }
-        if (details.get("name").contains("Raider")) {
-            viewb.setImageResource(R.drawable.raider);
-        }
-        if (details.get("name").contains("Sentinel")) {
-            viewb.setImageResource(R.drawable.sentinel);
-        }
-        if (details.get("name").contains("Soldier")) {
-            viewb.setImageResource(R.drawable.soldier);
-        }
-        if (details.get("name").contains("Technician")) {
-            viewb.setImageResource(R.drawable.technician);
-        }
+        Integer imageId = utils.getClassDrawableId(className);
+        if (imageId != null)
+            ((ImageView) findViewById(R.id.timeTimeDetailsImage)).setImageResource(imageId);
 
         TribesStats application = (TribesStats) getApplication();
         mTracker = application.getDefaultTracker();
@@ -139,28 +119,9 @@ public class TimeDetails extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(mTracker!=null){
+        if (mTracker != null) {
             mTracker.setScreenName("PlayerActivity");
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         }
-    }
-
-
-}
-
-
-class CustomComparator implements Comparator<HashMap<String, String>> {
-    @Override
-    public int compare(HashMap<String, String> o1, HashMap<String, String> o2) {
-        try {
-            if (Integer.parseInt(o1.get("value").replace(" mins", "")) >= Integer.parseInt(o2.get("value").replace(" mins", ""))) {
-                return -1;
-            }
-            return 1;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
-
     }
 }
