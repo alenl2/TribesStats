@@ -2,6 +2,7 @@ package si.komp.tribesascendstats.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +14,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import si.komp.tribesascendstats.R;
+import si.komp.tribesascendstats.TribesUtils;
 
 public class TimeAdapter extends BaseAdapter {
     private static LayoutInflater inflater = null;
+    @NonNull
     private final ArrayList<HashMap<String, String>> data;
+    @NonNull
+    private final Context context;
 
-    public TimeAdapter(Activity a, ArrayList<HashMap<String, String>> d) {
+    public TimeAdapter(@NonNull Activity a, @NonNull ArrayList<HashMap<String, String>> d) {
         data = d;
+        context = a;
         inflater = (LayoutInflater) a.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -40,46 +46,18 @@ public class TimeAdapter extends BaseAdapter {
         if (convertView == null)
             vi = inflater.inflate(R.layout.list_row_time, null);
 
-        TextView text1 = (TextView) vi.findViewById(R.id.textTimeClass); // title
-        TextView text2 = (TextView) vi.findViewById(R.id.textTimeTime); // artist name
-        ImageView viewb = (ImageView) vi.findViewById(R.id.classImage);
-
         HashMap<String, String> dat = data.get(position);
+        String className = dat.get("name").toLowerCase(), timeForClass = dat.get("timeForClass");
 
-
-        if (dat.get("name").contains("Brute")) {
-            viewb.setImageResource(R.drawable.brute);
-        }
-        if (dat.get("name").contains("Doombringer")) {
-            viewb.setImageResource(R.drawable.doombringer);
-        }
-        if (dat.get("name").contains("Infiltrator")) {
-            viewb.setImageResource(R.drawable.infiltrator);
-        }
-        if (dat.get("name").contains("Juggernaught")) {
-            viewb.setImageResource(R.drawable.juggernaught);
-        }
-        if (dat.get("name").contains("n. pathfinder")) {
-            viewb.setImageResource(R.drawable.pathfinder);
-        }
-        if (dat.get("name").contains("Pathfinder")) {
-            viewb.setImageResource(R.drawable.pathfinder);
-        }
-        if (dat.get("name").contains("Raider")) {
-            viewb.setImageResource(R.drawable.raider);
-        }
-        if (dat.get("name").contains("Sentinel")) {
-            viewb.setImageResource(R.drawable.sentinel);
-        }
-        if (dat.get("name").contains("Soldier")) {
-            viewb.setImageResource(R.drawable.soldier);
-        }
-        if (dat.get("name").contains("Technician")) {
-            viewb.setImageResource(R.drawable.technician);
+        try {
+            ((ImageView) vi.findViewById(R.id.classImage)).setImageResource(TribesUtils.CLASS_DRAWABLES.get(className));
+        } catch (Exception e) {
+            new IllegalArgumentException(className, e).printStackTrace();
         }
 
-        text1.setText(dat.get("name"));
-        text2.setText(dat.get("timeForClass") + " mins");
+        ((TextView) vi.findViewById(R.id.textTimeClass)).setText(TribesUtils.CLASS_STRINGS.get(className));
+
+        ((TextView) vi.findViewById(R.id.textTimeTime)).setText(String.format(context.getString(R.string.minutes_short_format), timeForClass));
 
         return vi;
     }

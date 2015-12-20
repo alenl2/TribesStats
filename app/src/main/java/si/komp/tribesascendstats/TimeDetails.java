@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,13 +21,13 @@ import com.google.android.gms.analytics.Tracker;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
 import si.komp.tribesascendstats.adapters.Adapter;
 
 public class TimeDetails extends Activity {
-    private Context ctx;
+    @NonNull
+    private final Context ctx = this;
 
     private ArrayList<HashMap<String, String>> toPass;
     private Tracker mTracker;
@@ -36,74 +38,56 @@ public class TimeDetails extends Activity {
         setContentView(R.layout.activity_time_details);
         Intent intent = getIntent();
 
-        ctx = this;
         @SuppressWarnings("unchecked")
         HashMap<String, String> details = (HashMap<String, String>) intent.getSerializableExtra("data");
 
-        TextView tv1 = (TextView) findViewById(R.id.timeClassNameDetails);
-        TextView tv2 = (TextView) findViewById(R.id.timeClasstimeDetails);
-        setTitle((details != null ? details.get("name") : null) + " class usage");
-        tv1.setText(details.get("name"));
-        tv2.setText(details.get("timeForClass") + " mins");
+        if (details == null) {
+            Log.e("TimeDetails.onCreate", "Details is NULL, aborting initialization");
+        } else {
+            String className = details.get("name"), translatedClassName, timeForClass = details.get("timeForClass");
 
-        toPass = new ArrayList<>();
-
-        for (String key : details.keySet()) {
-            if (key.equals("name") || key.equals("timeForClass")) {
-                continue;
+            try {
+                translatedClassName = getString(TribesUtils.CLASS_STRINGS.get(className.toLowerCase()));
+            } catch (Exception e) {
+                translatedClassName = className;
             }
-            if (key.startsWith("map-")) {
-                HashMap<String, String> ins = new HashMap<>();
-                ins.put("name", key.replace("map-", ""));
-                ins.put("value", details.get(key) + " mins");
-                toPass.add(ins);
+
+            setTitle(String.format(getString(R.string.class_usage_format), translatedClassName));
+
+            ((TextView) findViewById(R.id.timeClassNameDetails)).setText(translatedClassName);
+
+            ((TextView) findViewById(R.id.timeClasstimeDetails)).setText(String.format(getString(R.string.minutes_short_format), timeForClass));
+
+            toPass = new ArrayList<>();
+
+            for (String key : details.keySet()) {
+                if (key.startsWith("map-")) {
+                    HashMap<String, String> ins = new HashMap<>();
+                    ins.put("name", key.replace("map-", ""));
+                    ins.put("value", details.get(key));
+                    toPass.add(ins);
+                }
             }
-        }
 
-        Collections.sort(toPass, new CustomComparator());//this could be optimised to run when we are creating toPass hashmap
+            Collections.sort(toPass, new CustomMapComparator("value"));//this could be optimised to run when we are creating toPass hashmap
 
-        Adapter adapter = new Adapter(this, toPass);
-        ListView lw = ((ListView) findViewById(R.id.detailsTimeClasses));
-        lw.setAdapter(adapter);
+            Adapter adapter = new Adapter(this, toPass);
 
-        lw.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(ctx, toPass.get(position).get("name") + " -- " + toPass.get(position).get("value"), Toast.LENGTH_SHORT).show();
-            }
-        });
+            ListView lw = ((ListView) findViewById(R.id.detailsTimeClasses));
+            lw.setAdapter(adapter);
+            lw.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    try {
+                        String toastText = String.format(getString(R.string.time_toast_format), toPass.get(position).get("name"), toPass.get(position).get("value"));
+                        Toast.makeText(ctx, toastText, Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
-        ImageView viewb = (ImageView) findViewById(R.id.timeTimeDetailsImage);
-
-        if (details.get("name").contains("Brute")) {
-            viewb.setImageResource(R.drawable.brute);
-        }
-        if (details.get("name").contains("Doombringer")) {
-            viewb.setImageResource(R.drawable.doombringer);
-        }
-        if (details.get("name").contains("Infiltrator")) {
-            viewb.setImageResource(R.drawable.infiltrator);
-        }
-        if (details.get("name").contains("Juggernaught")) {
-            viewb.setImageResource(R.drawable.juggernaught);
-        }
-        if (details.get("name").contains("n. pathfinder")) {
-            viewb.setImageResource(R.drawable.pathfinder);
-        }
-        if (details.get("name").contains("Pathfinder")) {
-            viewb.setImageResource(R.drawable.pathfinder);
-        }
-        if (details.get("name").contains("Raider")) {
-            viewb.setImageResource(R.drawable.raider);
-        }
-        if (details.get("name").contains("Sentinel")) {
-            viewb.setImageResource(R.drawable.sentinel);
-        }
-        if (details.get("name").contains("Soldier")) {
-            viewb.setImageResource(R.drawable.soldier);
-        }
-        if (details.get("name").contains("Technician")) {
-            viewb.setImageResource(R.drawable.technician);
+            ((ImageView) findViewById(R.id.timeTimeDetailsImage)).setImageResource(TribesUtils.CLASS_DRAWABLES.get(className.toLowerCase()));
         }
 
         TribesStats application = (TribesStats) getApplication();
@@ -117,50 +101,23 @@ public class TimeDetails extends Activity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent resultIntent = new Intent();
-        switch (item.getItemId()) {
-            case R.id.action_refresh:
-                setResult(Activity.RESULT_OK, resultIntent);
-                finish();
-                break;
-            case R.id.action_refresh2:
-                setResult(Activity.RESULT_OK, resultIntent);
-                finish();
-                break;
-            default:
-                break;
-        }
+    // Will be called by the 'Reset search history' menu entry onClick
+    public void resetHistory(MenuItem item) {
+        new HistoryManager(this).resetHistory();
+    }
 
-        return super.onOptionsItemSelected(item);
+    // Will be called by the 'Refresh page' menu entry onClick
+    public void refreshPage(MenuItem item) {
+        setResult(Activity.RESULT_OK, new Intent());
+        finish();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(mTracker!=null){
+        if (mTracker != null) {
             mTracker.setScreenName("PlayerActivity");
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         }
-    }
-
-
-}
-
-
-class CustomComparator implements Comparator<HashMap<String, String>> {
-    @Override
-    public int compare(HashMap<String, String> o1, HashMap<String, String> o2) {
-        try {
-            if (Integer.parseInt(o1.get("value").replace(" mins", "")) >= Integer.parseInt(o2.get("value").replace(" mins", ""))) {
-                return -1;
-            }
-            return 1;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
-
     }
 }

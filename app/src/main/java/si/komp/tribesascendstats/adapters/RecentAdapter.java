@@ -2,6 +2,8 @@ package si.komp.tribesascendstats.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +19,14 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import si.komp.tribesascendstats.R;
+import si.komp.tribesascendstats.TribesUtils;
 
 public class RecentAdapter extends BaseAdapter {
-    private static LayoutInflater inflater = null;
+    private static LayoutInflater inflater;
+    @NonNull
     private final ArrayList<HashMap<String, String>> data;
 
-    public RecentAdapter(Activity a, ArrayList<HashMap<String, String>> d) {
+    public RecentAdapter(@NonNull Activity a, @NonNull ArrayList<HashMap<String, String>> d) {
         data = d;
         inflater = (LayoutInflater) a.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -73,66 +77,11 @@ public class RecentAdapter extends BaseAdapter {
         text7.setText(dat.get("gameTimeInMatch"));
         text8.setText(dat.get("gameKills"));
 
-        ImageView viewb = (ImageView) vi.findViewById(R.id.mapImage);
-        Locale l = Locale.getDefault();
-        String imagePath = dat.get("imageUrl").toLowerCase(l);
-
-        if (imagePath.contains("airarena")) {
-            viewb.setImageResource(R.drawable.airarena);
-        } else if (imagePath.contains("arxnovena")) {
-            viewb.setImageResource(R.drawable.arxnovena);
-        } else if (imagePath.contains("bellaomega")) {
-            viewb.setImageResource(R.drawable.bellaomega);
-        } else if (imagePath.contains("blueshift")) {
-            viewb.setImageResource(R.drawable.blueshift);
-        } else if (imagePath.contains("canyoncrusaderevival")) {
-            viewb.setImageResource(R.drawable.canyoncrusaderevival);
-        } else if (imagePath.contains("crossfire")) {
-            viewb.setImageResource(R.drawable.crossfire);
-        } else if (imagePath.contains("dangerouscrossing")) {
-            viewb.setImageResource(R.drawable.dangerouscrossing);
-        } else if (imagePath.contains("drydock")) {
-            viewb.setImageResource(R.drawable.drydock);
-        } else if (imagePath.contains("drydocknight")) {
-            viewb.setImageResource(R.drawable.drydocknight);
-        } else if (imagePath.contains("fraytown")) {
-            viewb.setImageResource(R.drawable.fraytown);
-        } else if (imagePath.contains("hinterlands")) {
-            viewb.setImageResource(R.drawable.hinterlands);
-        } else if (imagePath.contains("inferno")) {
-            viewb.setImageResource(R.drawable.inferno);
-        } else if (imagePath.contains("katabatic")) {
-            viewb.setImageResource(R.drawable.katabatic);
-        } else if (imagePath.contains("lavaarena")) {
-            viewb.setImageResource(R.drawable.lavaarena);
-        } else if (imagePath.contains("miasma")) {
-            viewb.setImageResource(R.drawable.miasma);
-        } else if (imagePath.contains("nightabatic")) {
-            viewb.setImageResource(R.drawable.nightabatic);
-        } else if (imagePath.contains("outskirts")) {
-            viewb.setImageResource(R.drawable.outskirts);
-        } else if (imagePath.contains("permafrost")) {
-            viewb.setImageResource(R.drawable.permafrost);
-        } else if (imagePath.contains("	uicksand")) {
-            viewb.setImageResource(R.drawable.quicksand);
-        } else if (imagePath.contains("raindance")) {
-            viewb.setImageResource(R.drawable.raindance);
-        } else if (imagePath.contains("stonehenge")) {
-            viewb.setImageResource(R.drawable.stonehenge);
-        } else if (imagePath.contains("sulfurcove")) {
-            viewb.setImageResource(R.drawable.sulfurcove);
-        } else if (imagePath.contains("sunstar")) {
-            viewb.setImageResource(R.drawable.sunstar);
-        } else if (imagePath.contains("tartarus")) {
-            viewb.setImageResource(R.drawable.tartarus);
-        } else if (imagePath.contains("templeruins")) {
-            viewb.setImageResource(R.drawable.templeruins);
-        } else if (imagePath.contains("undercroft")) {
-            viewb.setImageResource(R.drawable.undercroft);
-        } else if (imagePath.contains("walledin")) {
-            viewb.setImageResource(R.drawable.walledin);
-        } else if (imagePath.contains("whiteout")) {
-            viewb.setImageResource(R.drawable.whiteout);
+        String mapPlayed = dat.get("imageUrl").toLowerCase().replace("images/icons/maps/", "").replace(".jpg", "");
+        try {
+            ((ImageView) vi.findViewById(R.id.mapImage)).setImageResource(TribesUtils.MAP_DRAWABLES.get(mapPlayed));
+        } catch (Exception e) {
+            Log.e("RecentAdapter.getView", "Error loading image for map " + mapPlayed);
         }
 
         String classes = dat.get("classesPlayed");
@@ -146,27 +95,11 @@ public class RecentAdapter extends BaseAdapter {
         }
         int curImg = 0;
         for (String classPlayed : classes.split(",")) {
-            ImageView view = (ImageView) vi.findViewById(imgs[curImg]);
-            if (classPlayed.contains("Pathfinder")) {
-                view.setImageResource(R.drawable.pathfinder);
-            } else if (classPlayed.contains("Sentinel")) {
-                view.setImageResource(R.drawable.sentinel);
-            } else if (classPlayed.contains("Infiltrator")) {
-                view.setImageResource(R.drawable.infiltrator);
-            } else if (classPlayed.contains("Soldier")) {
-                view.setImageResource(R.drawable.soldier);
-            } else if (classPlayed.contains("Raider")) {
-                view.setImageResource(R.drawable.raider);
-            } else if (classPlayed.contains("Technician")) {
-                view.setImageResource(R.drawable.technician);
-            } else if (classPlayed.contains("Juggernaught")) {
-                view.setImageResource(R.drawable.juggernaught);
-            } else if (classPlayed.contains("Doombringer")) {
-                view.setImageResource(R.drawable.doombringer);
-            } else if (classPlayed.contains("Brute")) {
-                view.setImageResource(R.drawable.brute);
-            } else {
-                view.setImageDrawable(null);
+            String realClass = classPlayed.toLowerCase().replace("images/icons/classes/", "").replace(".gif", "");
+            try {
+                ((ImageView) vi.findViewById(imgs[curImg])).setImageResource(TribesUtils.CLASS_DRAWABLES.get(realClass));
+            } catch (Exception e) {
+                new IllegalArgumentException(realClass, e).printStackTrace();
             }
             curImg++;
         }
