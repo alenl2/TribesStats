@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import si.komp.tribesascendstats.R;
-import si.komp.tribesascendstats.TribesUtils;
 
 
 public class DetailsAdapter extends BaseAdapter {
@@ -23,7 +22,7 @@ public class DetailsAdapter extends BaseAdapter {
     private final ArrayList<HashMap<String, String>> data;
 
     @NonNull
-    private final TribesUtils utils;
+    private final Context context;
 
     /**
      * @param activity Parent activity
@@ -31,7 +30,7 @@ public class DetailsAdapter extends BaseAdapter {
      */
     public DetailsAdapter(@NonNull Activity activity, @NonNull ArrayList<HashMap<String, String>> data) {
         this.data = data;
-        utils = new TribesUtils(activity);
+        this.context = activity;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -65,13 +64,13 @@ public class DetailsAdapter extends BaseAdapter {
         try {
             if (key.startsWith(searchedClass)) {
                 view.findViewById(layoutId).setVisibility(View.VISIBLE);
-                ((TextView) view.findViewById(playerClassId)).setText(utils.getString(nameId));
+                ((TextView) view.findViewById(playerClassId)).setText(context.getString(nameId));
                 if (key.contains("ClassDemage"))
                     ((TextView) view.findViewById(playerDamageId)).setText(origin.get(key));
                 if (key.contains("ClassKills"))
                     ((TextView) view.findViewById(playerKillsId)).setText(origin.get(key));
                 if (key.contains("ClassTimePlayed")) {
-                    String timeText = String.format(utils.getString(R.string.minutes_short_format), origin.get(key).replace(" minutes", ""));
+                    String timeText = String.format(context.getString(R.string.minutes_short_format), origin.get(key).replace(" minutes", ""));
                     ((TextView) view.findViewById(playerTimeId)).setText(timeText);
                 }
             }

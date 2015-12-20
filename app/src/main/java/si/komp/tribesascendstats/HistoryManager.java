@@ -13,14 +13,12 @@ import java.util.StringTokenizer;
  */
 public class HistoryManager {
     public final SharedPreferences preferences;
-    public final SharedPreferences.Editor editor;
 
     /**
      * @param context The current context.
      */
     public HistoryManager(@NonNull Context context) {
         this.preferences = context.getSharedPreferences("history", Context.MODE_PRIVATE);
-        this.editor = this.preferences.edit();
     }
 
     /**
@@ -45,10 +43,13 @@ public class HistoryManager {
      * @param newSearchHistory Search history to subtitute the current one
      */
     public void setHistory(@NonNull Set<String> newSearchHistory) {
-        // editor.putStringSet("user", new HashSet<String>());
+        SharedPreferences.Editor editor = preferences.edit();
+
+        //editor.putStringSet("usernameHistory", newSearchHistory);
         // Requires API level 11 :-(
 
         editor.putString("usernameHistory", newSearchHistory.toString());
+
         editor.apply();
     }
 
@@ -56,6 +57,7 @@ public class HistoryManager {
      * Clear all the users in the history
      */
     public void resetHistory() {
+        SharedPreferences.Editor editor = preferences.edit();
         editor.remove("usernameHistory");
         editor.apply();
     }

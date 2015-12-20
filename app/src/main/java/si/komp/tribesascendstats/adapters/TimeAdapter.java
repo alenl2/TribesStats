@@ -2,6 +2,7 @@ package si.komp.tribesascendstats.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,14 @@ import si.komp.tribesascendstats.TribesUtils;
 
 public class TimeAdapter extends BaseAdapter {
     private static LayoutInflater inflater = null;
+    @NonNull
     private final ArrayList<HashMap<String, String>> data;
-    private final TribesUtils utils;
+    @NonNull
+    private final Context context;
 
-    public TimeAdapter(Activity a, ArrayList<HashMap<String, String>> d) {
+    public TimeAdapter(@NonNull Activity a, @NonNull ArrayList<HashMap<String, String>> d) {
         data = d;
-        utils = new TribesUtils(a);
+        context = a;
         inflater = (LayoutInflater) a.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -44,18 +47,17 @@ public class TimeAdapter extends BaseAdapter {
             vi = inflater.inflate(R.layout.list_row_time, null);
 
         HashMap<String, String> dat = data.get(position);
-        String className = dat.get("name"), timeForClass = dat.get("timeForClass");
+        String className = dat.get("name").toLowerCase(), timeForClass = dat.get("timeForClass");
 
-        Integer classDrawableId = utils.getClassDrawableId(className);
-        if (classDrawableId != null)
-            ((ImageView) vi.findViewById(R.id.classImage)).setImageResource(classDrawableId);
+        try {
+            ((ImageView) vi.findViewById(R.id.classImage)).setImageResource(TribesUtils.CLASS_DRAWABLES.get(className));
+        } catch (Exception e) {
+            new IllegalArgumentException(className, e).printStackTrace();
+        }
 
-        TextView text1 = (TextView) vi.findViewById(R.id.textTimeClass);
-        text1.setText(utils.translateClassName(dat.get("name")));
+        ((TextView) vi.findViewById(R.id.textTimeClass)).setText(TribesUtils.CLASS_STRINGS.get(className));
 
-        TextView text2 = (TextView) vi.findViewById(R.id.textTimeTime);
-        String minutesFormatter = utils.getString(R.string.minutes_short_format);
-        text2.setText(String.format(minutesFormatter, timeForClass));
+        ((TextView) vi.findViewById(R.id.textTimeTime)).setText(String.format(context.getString(R.string.minutes_short_format), timeForClass));
 
         return vi;
     }

@@ -234,13 +234,17 @@ public class PlayerActivity extends FragmentActivity {
                 ListView listView = (ListView) rootView.findViewById(lwId);
                 listView.setAdapter(adapter);
                 listView.setOnItemClickListener(onItemClickListener);
-                //listView.setScrollingCacheEnabled(false);
+                listView.setScrollingCacheEnabled(false);
             }
             return rootView;
         }
     }
 
     public class DownloadPage extends AsyncTask<String, Void, HashMap<String, ArrayList<HashMap<String, String>>>> {
+        private Document doc;
+        @NonNull
+        private final HashMap<String, ArrayList<HashMap<String, String>>> ret = new HashMap<>();
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -249,9 +253,43 @@ public class PlayerActivity extends FragmentActivity {
             this.dialog.show();
         }
 
-        private void addSummaryValue(@NonNull Document origin, @NonNull ArrayList<HashMap<String, String>> destination, int valNameId, @NonNull String valKey) {
+        @Override
+        protected HashMap<String, ArrayList<HashMap<String, String>>> doInBackground(String... urls) {
+            for (String url : urls) {
+                try {
+                    doc = Jsoup.connect(url).get();
+
+                    try {
+                        Element lblErrorElement = doc.getElementById("lblError");
+                        if (lblErrorElement != null && lblErrorElement.html().contains("No player"))
+                            return ret;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        Element viewStateElement = doc.getElementById("__VIEWSTATE");
+                        viewState = viewStateElement.attr("value");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    loadPlayerSummary();
+
+                    loadRecentMatches();
+
+                    loadClassTimes();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return ret;
+        }
+
+        private void addSummaryValue(@NonNull ArrayList<HashMap<String, String>> destination, int valNameId, @NonNull String valKey) {
             try {
-                Element element = origin.getElementById(valKey);
+                Element element = doc.getElementById(valKey);
                 if (element != null)
                     destination.add(setVal(getResources().getString(valNameId), element.html()));
             } catch (Exception e) {
@@ -259,42 +297,42 @@ public class PlayerActivity extends FragmentActivity {
             }
         }
 
-        private void loadPlayerSummary(@NonNull Document origin, @NonNull HashMap<String, ArrayList<HashMap<String, String>>> destination) {
+        private void loadPlayerSummary() {
             try {
                 ArrayList<HashMap<String, String>> playerSummary = new ArrayList<>();
 
-                addSummaryValue(origin, playerSummary, R.string.key_name, "psName");
-                addSummaryValue(origin, playerSummary, R.string.key_level, "psLevel");
-                addSummaryValue(origin, playerSummary, R.string.key_last_online, "psLogin");
-                addSummaryValue(origin, playerSummary, R.string.key_user_created, "psCreated");
-                addSummaryValue(origin, playerSummary, R.string.key_matches_completed, "lblMatchesCompleted");
-                addSummaryValue(origin, playerSummary, R.string.key_kills, "lblKills");
-                addSummaryValue(origin, playerSummary, R.string.key_deaths, "lblDeaths");
-                addSummaryValue(origin, playerSummary, R.string.key_assists, "lblAssists");
-                addSummaryValue(origin, playerSummary, R.string.key_kill_death_ratio, "lblKDR");
-                addSummaryValue(origin, playerSummary, R.string.key_ski_distance, "lblSkiDistance");
-                addSummaryValue(origin, playerSummary, R.string.key_top_speed, "lblTopSpeed");
-                addSummaryValue(origin, playerSummary, R.string.key_belt_kills, "lblBeltKills");
-                addSummaryValue(origin, playerSummary, R.string.key_sprees, "lblSprees");
-                addSummaryValue(origin, playerSummary, R.string.key_multi_kills, "lblMultiKill");
-                addSummaryValue(origin, playerSummary, R.string.key_melee_kills, "lblMeleeKills");
-                addSummaryValue(origin, playerSummary, R.string.key_midairs, "lblMidairs");
-                addSummaryValue(origin, playerSummary, R.string.key_call_ins, "lblCallInsMade");
-                addSummaryValue(origin, playerSummary, R.string.key_call_in_kills, "lblCallInKills");
-                addSummaryValue(origin, playerSummary, R.string.key_full_regenerations, "lblFullRegeneration");
-                addSummaryValue(origin, playerSummary, R.string.key_headshots, "lblHeadshots");
-                addSummaryValue(origin, playerSummary, R.string.key_flag_caps, "lblFlagCaps");
-                addSummaryValue(origin, playerSummary, R.string.key_flag_returns, "lblFlagReturns");
-                addSummaryValue(origin, playerSummary, R.string.key_high_speed_grabs, "lblHighspeedGrabs");
-                addSummaryValue(origin, playerSummary, R.string.key_generators_destroyed, "lblGensDestroyed");
-                addSummaryValue(origin, playerSummary, R.string.key_base_assets_destroyed, "lblBaseAssetsDestroyed");
-                addSummaryValue(origin, playerSummary, R.string.key_base_repairs, "lblBaseRepairs");
-                addSummaryValue(origin, playerSummary, R.string.key_roadkills, "lblRoadkills");
-                addSummaryValue(origin, playerSummary, R.string.key_vehicles_destroyed, "lblVehiclesDestroyed");
-                addSummaryValue(origin, playerSummary, R.string.key_vehicle_kills, "lblVehicleKills");
-                addSummaryValue(origin, playerSummary, R.string.key_base_upgrades, "lblBaseUpgrades");
+                addSummaryValue(playerSummary, R.string.key_name, "psName");
+                addSummaryValue(playerSummary, R.string.key_level, "psLevel");
+                addSummaryValue(playerSummary, R.string.key_last_online, "psLogin");
+                addSummaryValue(playerSummary, R.string.key_user_created, "psCreated");
+                addSummaryValue(playerSummary, R.string.key_matches_completed, "lblMatchesCompleted");
+                addSummaryValue(playerSummary, R.string.key_kills, "lblKills");
+                addSummaryValue(playerSummary, R.string.key_deaths, "lblDeaths");
+                addSummaryValue(playerSummary, R.string.key_assists, "lblAssists");
+                addSummaryValue(playerSummary, R.string.key_kill_death_ratio, "lblKDR");
+                addSummaryValue(playerSummary, R.string.key_ski_distance, "lblSkiDistance");
+                addSummaryValue(playerSummary, R.string.key_top_speed, "lblTopSpeed");
+                addSummaryValue(playerSummary, R.string.key_belt_kills, "lblBeltKills");
+                addSummaryValue(playerSummary, R.string.key_sprees, "lblSprees");
+                addSummaryValue(playerSummary, R.string.key_multi_kills, "lblMultiKill");
+                addSummaryValue(playerSummary, R.string.key_melee_kills, "lblMeleeKills");
+                addSummaryValue(playerSummary, R.string.key_midairs, "lblMidairs");
+                addSummaryValue(playerSummary, R.string.key_call_ins, "lblCallInsMade");
+                addSummaryValue(playerSummary, R.string.key_call_in_kills, "lblCallInKills");
+                addSummaryValue(playerSummary, R.string.key_full_regenerations, "lblFullRegeneration");
+                addSummaryValue(playerSummary, R.string.key_headshots, "lblHeadshots");
+                addSummaryValue(playerSummary, R.string.key_flag_caps, "lblFlagCaps");
+                addSummaryValue(playerSummary, R.string.key_flag_returns, "lblFlagReturns");
+                addSummaryValue(playerSummary, R.string.key_high_speed_grabs, "lblHighspeedGrabs");
+                addSummaryValue(playerSummary, R.string.key_generators_destroyed, "lblGensDestroyed");
+                addSummaryValue(playerSummary, R.string.key_base_assets_destroyed, "lblBaseAssetsDestroyed");
+                addSummaryValue(playerSummary, R.string.key_base_repairs, "lblBaseRepairs");
+                addSummaryValue(playerSummary, R.string.key_roadkills, "lblRoadkills");
+                addSummaryValue(playerSummary, R.string.key_vehicles_destroyed, "lblVehiclesDestroyed");
+                addSummaryValue(playerSummary, R.string.key_vehicle_kills, "lblVehicleKills");
+                addSummaryValue(playerSummary, R.string.key_base_upgrades, "lblBaseUpgrades");
 
-                destination.put("playerSum", playerSummary);
+                ret.put("playerSum", playerSummary);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -394,105 +432,67 @@ public class PlayerActivity extends FragmentActivity {
             }
         }
 
-        private void loadRecentMatches(@NonNull Document origin, @NonNull HashMap<String, ArrayList<HashMap<String, String>>> destination) {
+        private void loadRecentMatches() {
             try {
                 ArrayList<HashMap<String, String>> recent = new ArrayList<>();
-                Elements games = origin.getElementById("historyTab").getElementsByClass("containerPh");
+                Elements games = doc.getElementById("historyTab").getElementsByClass("containerPh");
                 for (Element game : games)
                     loadPlayedGame(game, recent);
 
-                destination.put("recent", recent);
+                ret.put("recent", recent);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        private void loadClassTimes(@NonNull Document origin, @NonNull HashMap<String, ArrayList<HashMap<String, String>>> destination) {
-            Elements statsTab = origin.getElementById("tabs").getElementById("statsTab").getAllElements();
+        private void loadClassTimes() {
+            try {
+                Elements statsTab = doc.getElementById("tabs").getElementById("statsTab").getAllElements();
 
-            ArrayList<HashMap<String, String>> times = new ArrayList<>();
+                ArrayList<HashMap<String, String>> times = new ArrayList<>();
 
-            ArrayList<String> test = new ArrayList<>(); //used to check if that element was allredy in there because tribes ppl used id tag on one page 10 times >*
+                ArrayList<String> test = new ArrayList<>(); //used to check if that element was allredy in there because tribes ppl used id tag on one page 10 times >*
 
-            for (Element tab : statsTab) {
-                if (tab.hasAttr("id") && tab.attr("id").equals("panelMap")) {
-                    HashMap<String, String> toAdd = new HashMap<>();
+                for (Element tab : statsTab) {
+                    if (tab.hasAttr("id") && tab.attr("id").equals("panelMap")) {
+                        HashMap<String, String> toAdd = new HashMap<>();
 
-                    try {
-                        String currentClass = tab.getElementById("lblTimePlayedClass").html();
+                        try {
+                            String currentClass = tab.getElementById("lblTimePlayedClass").html();
 
-                        if (!test.contains(currentClass)) {
-                            continue;
-                        }
-
-                        test.add(currentClass);
-
-                        toAdd.put("name", currentClass);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    Integer classPlayTime = 0;
-
-                    try {
-                        for (Element mapTime : tab.getElementsByClass("timeplayed")) {
-                            try {
-                                String playedMap = mapTime.getElementsByClass("map").get(0).html();
-                                String timePlayed = mapTime.getElementsByClass("time").get(0).html().replace("&lt; ", "");
-                                classPlayTime += Integer.parseInt(timePlayed);
-
-                                toAdd.put("map-" + playedMap, timePlayed);
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            if (test.contains(currentClass)) {
+                                continue;
                             }
 
+                            test.add(currentClass);
+
+                            toAdd.put("name", currentClass);
+
+                            Integer classPlayTime = 0;
+
+                            for (Element mapTime : tab.getElementsByClass("timeplayed")) {
+                                try {
+                                    String playedMap = mapTime.getElementsByClass("map").get(0).html();
+                                    String timePlayed = mapTime.getElementsByClass("time").get(0).html().replace("&lt; ", "");
+                                    classPlayTime += Integer.parseInt(timePlayed);
+
+                                    toAdd.put("map-" + playedMap, timePlayed);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                            toAdd.put("timeForClass", String.valueOf(classPlayTime));
+                            times.add(toAdd);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        toAdd.put("timeForClass", String.valueOf(classPlayTime));
-                        times.add(toAdd);
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                 }
+                ret.put("times", times);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            destination.put("times", times);
-        }
-
-
-        @Override
-        protected HashMap<String, ArrayList<HashMap<String, String>>> doInBackground(String... urls) {
-
-            HashMap<String, ArrayList<HashMap<String, String>>> ret = new HashMap<>();
-
-            for (String url : urls) {
-                try {
-                    Document doc = Jsoup.connect(url).get();
-
-                    try {
-                        Element element = doc.getElementById("lblError");
-                        if (element != null && element.html().contains("No player"))
-                            return ret;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    try {
-                        viewState = doc.getElementById("__VIEWSTATE").attr("value");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    loadPlayerSummary(doc, ret);
-
-                    loadRecentMatches(doc, ret);
-
-                    loadClassTimes(doc, ret);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            return ret;
         }
 
         private final ProgressDialog dialog = new ProgressDialog(ctx);

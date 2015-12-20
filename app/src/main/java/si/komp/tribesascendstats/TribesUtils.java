@@ -1,18 +1,31 @@
 package si.komp.tribesascendstats;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class TribesUtils {
+    /**
+     * Maps each Tribes Ascend class to it's corresponding Android string resource ID (Like R.string.xyz)
+     * All class names are lower case, with no spacing
+     */
     @NonNull
-    private final Context context;
+    public static final Map<String, Integer> CLASS_STRINGS = new HashMap<>(11);
 
+    /**
+     * Maps each Tribes Ascend class to it's corresponding Android drawable resource ID (Like R.drawable.xyz)
+     * All class names are lower case, with no spacing
+     */
     @NonNull
-    public static final Map<String, Integer> CLASS_DRAWABLES = new HashMap<>(11), CLASS_STRINGS = new HashMap<>(11), MAP_DRAWABLES = new HashMap<>();
+    public static final Map<String, Integer> CLASS_DRAWABLES = new HashMap<>(11);
+
+    /**
+     * Maps each Tribes Ascend map to it's corresponding Android drawable resource ID (Like R.drawable.xyz)
+     * All map names are lower case, with no spacing
+     */
+    @NonNull
+    public static final Map<String, Integer> MAP_DRAWABLES = new HashMap<>();
 
     static {
         CLASS_DRAWABLES.put("pathfinder", R.drawable.pathfinder);
@@ -66,69 +79,8 @@ public class TribesUtils {
         MAP_DRAWABLES.put("sunstar", R.drawable.sunstar);
         MAP_DRAWABLES.put("tartarus", R.drawable.tartarus);
         MAP_DRAWABLES.put("templeruins", R.drawable.templeruins);
-        MAP_DRAWABLES.put("terminus", null);// TODO
+        MAP_DRAWABLES.put("terminus", null); // TODO
         MAP_DRAWABLES.put("undercroft", R.drawable.undercroft);
         MAP_DRAWABLES.put("walledin", R.drawable.walledin);
-    }
-
-    public TribesUtils(@NonNull Context context) {
-        this.context = context;
-    }
-
-    /**
-     * @param id A string ID from the Android string i18n system (Example: R.string.foo)
-     * @return The searched string
-     */
-    @NonNull
-    public String getString(int id) {
-        return context.getResources().getString(id);
-    }
-
-    /**
-     * @param className Name of a Tribes ascend class
-     *                  {Pathfinder | N. Pathfinder | Infiltrator | Sentinel | Soldier | Raider | Technician | Brute | Doombringer | Juggernaught | Juggernaut}
-     *                  Case insensitive
-     * @return The translated name, if it is present into the Android string i18n system, the className itself otherwise
-     */
-    @NonNull
-    public String translateClassName(@NonNull String className) {
-        try {
-            return getString(CLASS_STRINGS.get(className.toLowerCase()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return className;
-        }
-    }
-
-    /**
-     * @param className Name of a Tribes ascend class
-     *                  {Pathfinder | N. Pathfinder | Infiltrator | Sentinel | Soldier | Raider | Technician | Brute | Doombringer | Juggernaught | Juggernaut}
-     *                  Case insensitive
-     * @return The ID of the drawable from tha Android resource system (Example: R.drawable.foo)
-     */
-    @Nullable
-    public Integer getClassDrawableId(@NonNull String className) {
-        try {
-            return CLASS_DRAWABLES.get(className.toLowerCase());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * @param mapName Name of a Tribes Ascend map
-     *                {}
-     *                Case insensitive
-     * @return The ID of the drawable from tha Android resource system (Example: R.drawable.foo)
-     */
-    @Nullable
-    public Integer getMapDrawableId(@NonNull String mapName) {
-        try {
-            return MAP_DRAWABLES.get(mapName.toLowerCase());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 }

@@ -24,12 +24,9 @@ public class RecentAdapter extends BaseAdapter {
     private static LayoutInflater inflater;
     @NonNull
     private final ArrayList<HashMap<String, String>> data;
-    @NonNull
-    private final TribesUtils utils;
 
     public RecentAdapter(@NonNull Activity a, @NonNull ArrayList<HashMap<String, String>> d) {
         data = d;
-        utils = new TribesUtils(a);
         inflater = (LayoutInflater) a.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -79,11 +76,12 @@ public class RecentAdapter extends BaseAdapter {
         text7.setText(dat.get("gameTimeInMatch"));
         text8.setText(dat.get("gameKills"));
 
-        ImageView viewb = (ImageView) vi.findViewById(R.id.mapImage);
-        String mapPlayed = dat.get("imageUrl").replace("images/icons/maps/", "").replace(".jpg", "");
-        Integer mapDrawableId = utils.getMapDrawableId(mapPlayed);
-        if (mapDrawableId != null)
-            viewb.setImageResource(mapDrawableId);
+        String mapPlayed = dat.get("imageUrl").toLowerCase().replace("images/icons/maps/", "").replace(".jpg", "");
+        try {
+            ((ImageView) vi.findViewById(R.id.mapImage)).setImageResource(TribesUtils.MAP_DRAWABLES.get(mapPlayed));
+        } catch (Exception e) {
+            new IllegalArgumentException(mapPlayed, e).printStackTrace();
+        }
 
         String classes = dat.get("classesPlayed");
         int[] imgs = new int[]{R.id.Image1, R.id.Image2, R.id.Image3,
@@ -96,9 +94,12 @@ public class RecentAdapter extends BaseAdapter {
         }
         int curImg = 0;
         for (String classPlayed : classes.split(",")) {
-            Integer classDrawableId = utils.getClassDrawableId(classPlayed);
-            if (classDrawableId != null)
-                ((ImageView) vi.findViewById(imgs[curImg])).setImageResource(classDrawableId);
+            String realClass = classPlayed.toLowerCase().replace("images/icons/classes/", "").replace(".gif", "");
+            try {
+                ((ImageView) vi.findViewById(imgs[curImg])).setImageResource(TribesUtils.CLASS_DRAWABLES.get(realClass));
+            } catch (Exception e) {
+                new IllegalArgumentException(realClass, e).printStackTrace();
+            }
             curImg++;
         }
         return vi;

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,9 +29,6 @@ public class TimeDetails extends Activity {
     @NonNull
     private final Context ctx = this;
 
-    @NonNull
-    private final TribesUtils utils = new TribesUtils(this);
-
     private ArrayList<HashMap<String, String>> toPass;
     private Tracker mTracker;
 
@@ -43,48 +41,50 @@ public class TimeDetails extends Activity {
         @SuppressWarnings("unchecked")
         HashMap<String, String> details = (HashMap<String, String>) intent.getSerializableExtra("data");
 
-        String className = details.get("name"), timeForClass = details.get("timeForClass");
+        if (details == null) {
+            Log.e("TimeDetails.onCreate", "Details is NULL, aborting initialization");
+        } else {
+            String className = details.get("name"), translatedClassName, timeForClass = details.get("timeForClass");
 
-        String title = String.format(getResources().getString(R.string.class_usage_format), utils.translateClassName(className));
-        setTitle(title);
-
-        TextView tv1 = (TextView) findViewById(R.id.timeClassNameDetails);
-        tv1.setText(className);
-
-        TextView tv2 = (TextView) findViewById(R.id.timeClasstimeDetails);
-        String tv2Text = String.format(getResources().getString(R.string.minutes_short_format), timeForClass);
-        tv2.setText(tv2Text);
-
-        toPass = new ArrayList<>();
-
-        for (String key : details.keySet()) {
-            if (key.startsWith("map-")) {
-                HashMap<String, String> ins = new HashMap<>();
-                ins.put("name", key.replace("map-", ""));
-                ins.put("value", details.get(key));
-                toPass.add(ins);
+            try {
+                translatedClassName = getString(TribesUtils.CLASS_STRINGS.get(className.toLowerCase()));
+            } catch (Exception e) {
+                translatedClassName = className;
             }
+
+            setTitle(String.format(getString(R.string.class_usage_format), translatedClassName));
+
+            ((TextView) findViewById(R.id.timeClassNameDetails)).setText(translatedClassName);
+
+            ((TextView) findViewById(R.id.timeClasstimeDetails)).setText(String.format(getString(R.string.minutes_short_format), timeForClass));
+
+            toPass = new ArrayList<>();
+
+            for (String key : details.keySet()) {
+                if (key.startsWith("map-")) {
+                    HashMap<String, String> ins = new HashMap<>();
+                    ins.put("name", key.replace("map-", ""));
+                    ins.put("value", details.get(key));
+                    toPass.add(ins);
+                }
+            }
+
+            Collections.sort(toPass, new CustomMapComparator("value"));//this could be optimised to run when we are creating toPass hashmap
+
+            Adapter adapter = new Adapter(this, toPass);
+
+            ListView lw = ((ListView) findViewById(R.id.detailsTimeClasses));
+            lw.setAdapter(adapter);
+            lw.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String toastText = toPass.get(position).get("name") + " -- " + toPass.get(position).get("value");
+                    Toast.makeText(ctx, toastText, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            ((ImageView) findViewById(R.id.timeTimeDetailsImage)).setImageResource(TribesUtils.CLASS_DRAWABLES.get(className.toLowerCase()));
         }
-
-        Collections.sort(toPass, new CustomMapComparator("value"));//this could be optimised to run when we are creating toPass hashmap
-
-        Adapter adapter = new Adapter(this, toPass);
-
-        OnItemClickListener onItemClickListener = new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String toastText = toPass.get(position).get("name") + " -- " + toPass.get(position).get("value");
-                Toast.makeText(ctx, toastText, Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        ListView lw = ((ListView) findViewById(R.id.detailsTimeClasses));
-        lw.setAdapter(adapter);
-        lw.setOnItemClickListener(onItemClickListener);
-
-        Integer imageId = utils.getClassDrawableId(className);
-        if (imageId != null)
-            ((ImageView) findViewById(R.id.timeTimeDetailsImage)).setImageResource(imageId);
 
         TribesStats application = (TribesStats) getApplication();
         mTracker = application.getDefaultTracker();

@@ -27,47 +27,6 @@ public class MainActivity extends Activity {
     private HistoryManager historyManager;
     private AutoCompleteTextView inputText;
 
-    private final OnEditorActionListener onEditorActionListener = new OnEditorActionListener() {
-
-        @Override
-        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                goToPlayer();
-                return true;
-            }
-            return false;
-        }
-    };
-
-    private final OnClickListener onClickListener = new OnClickListener() {
-        @Override
-        public void onClick(final View v) {
-            if (v.getId() == R.id.button1)
-                goToPlayer();
-        }
-    };
-
-    /**
-     * To be applied on the main AutoCompleteTextView
-     * "When it will be focused, the listener will show the dropdown menu with the suggestions
-     */
-    private final View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
-        @Override
-        public void onFocusChange(View view, boolean hasFocus) {
-            if (hasFocus && view.getId() == R.id.inputText) {
-                //Wait until the text field is initialized and then show the dropdown menu
-                inputText.post(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                inputText.showDropDown();
-                            }
-                        }
-                );
-            }
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,15 +34,44 @@ public class MainActivity extends Activity {
         historyManager = new HistoryManager(this);
 
         Button btn = (Button) findViewById(R.id.button1);
-        btn.setOnClickListener(onClickListener);
+        btn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                if (v.getId() == R.id.button1)
+                    goToPlayer();
+            }
+        });
 
         inputText = (AutoCompleteTextView) findViewById(R.id.inputText);
-        inputText.setOnEditorActionListener(onEditorActionListener);
-        inputText.setOnFocusChangeListener(onFocusChangeListener);
-        inputText.setSelectAllOnFocus(true);
+        inputText.setOnEditorActionListener(new OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    goToPlayer();
+                    return true;
+                }
+                return false;
+            }
+        });
+        inputText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            // When th view will be focused, the listener will show the dropdown menu with the suggestions
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus && view.getId() == R.id.inputText) {
+                    //Wait until the text field is initialized and then show the dropdown menu
+                    inputText.post(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    inputText.showDropDown();
+                                }
+                            }
+                    );
+                }
+            }
+        });
 
-        TribesStats application = (TribesStats) getApplication();
-        mTracker = application.getDefaultTracker();
+        mTracker = ((TribesStats) getApplication()).getDefaultTracker();
     }
 
     @Override
