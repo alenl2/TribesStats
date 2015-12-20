@@ -82,5 +82,6 @@ public class TribesUtils {
         MAP_DRAWABLES.put("terminus", null); // TODO
         MAP_DRAWABLES.put("undercroft", R.drawable.undercroft);
         MAP_DRAWABLES.put("walledin", R.drawable.walledin);
+        MAP_DRAWABLES.put("whiteout", null); // TODO
     }
 }

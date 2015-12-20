@@ -8,11 +8,9 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -24,30 +22,19 @@ import java.util.Set;
 
 public class MainActivity extends Activity {
     private Tracker mTracker;
-    private HistoryManager historyManager;
     private AutoCompleteTextView inputText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        historyManager = new HistoryManager(this);
-
-        Button btn = (Button) findViewById(R.id.button1);
-        btn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                if (v.getId() == R.id.button1)
-                    goToPlayer();
-            }
-        });
 
         inputText = (AutoCompleteTextView) findViewById(R.id.inputText);
         inputText.setOnEditorActionListener(new OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    goToPlayer();
+                    goToPlayer(null);
                     return true;
                 }
                 return false;
@@ -58,7 +45,7 @@ public class MainActivity extends Activity {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 if (hasFocus && view.getId() == R.id.inputText) {
-                    //Wait until the text field is initialized and then show the dropdown menu
+                    // Wait until the text field is initialized and then show the dropdown menu
                     inputText.post(
                             new Runnable() {
                                 @Override
@@ -77,14 +64,19 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        inputText.setAdapter(null);
 
         if (mTracker != null) {
             mTracker.setScreenName("MainActivity");
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         }
 
-        loadHistory();
-        inputText.requestFocus();
+        try {
+            loadHistory();
+            inputText.requestFocus();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean isNetworkAvailable() {
@@ -93,14 +85,13 @@ public class MainActivity extends Activity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    void goToPlayer() {
+    // Will be called by hompage 'Submit' button onClick
+    public void goToPlayer(View view) {
         if (isNetworkAvailable()) {
             String username = inputText.getText().toString();
             if (username.isEmpty()) {
                 Toast.makeText(this, getResources().getString(R.string.invalid_player_name), Toast.LENGTH_SHORT).show();
             } else {
-                historyManager.addUser(username);
-
                 PlayerActivity.flag = true;
                 Intent intent = new Intent(this, PlayerActivity.class);
                 intent.putExtra("userName", username);
@@ -116,12 +107,11 @@ public class MainActivity extends Activity {
      * Loads the search history into inputText
      */
     private void loadHistory() {
-        Set<String> historySet = historyManager.getHistory();
+        Set<String> historySet = new HistoryManager(this).getHistory();
         if (!historySet.isEmpty()) {
             // Set<String> -> String[] -> ArrayAdapter<String> <- setAdapter
             String[] historyArray = historySet.toArray(new String[1]);
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, historyArray);
-            inputText.setAdapter(adapter);
+            inputText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, historyArray));
         }
     }
 }

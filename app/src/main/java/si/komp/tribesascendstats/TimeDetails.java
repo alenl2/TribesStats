@@ -78,8 +78,12 @@ public class TimeDetails extends Activity {
             lw.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String toastText = toPass.get(position).get("name") + " -- " + toPass.get(position).get("value");
-                    Toast.makeText(ctx, toastText, Toast.LENGTH_SHORT).show();
+                    try {
+                        String toastText = String.format(getString(R.string.time_toast_format), toPass.get(position).get("name"), toPass.get(position).get("value"));
+                        Toast.makeText(ctx, toastText, Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
 
@@ -97,23 +101,15 @@ public class TimeDetails extends Activity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent resultIntent = new Intent();
-        switch (item.getItemId()) {
-            case R.id.action_refresh:
-                setResult(Activity.RESULT_OK, resultIntent);
-                finish();
-                break;
-            case R.id.action_refresh2:
-                setResult(Activity.RESULT_OK, resultIntent);
-                finish();
-                break;
-            default:
-                break;
-        }
+    // Will be called by the 'Reset search history' menu entry onClick
+    public void resetHistory(MenuItem item) {
+        new HistoryManager(this).resetHistory();
+    }
 
-        return super.onOptionsItemSelected(item);
+    // Will be called by the 'Refresh page' menu entry onClick
+    public void refreshPage(MenuItem item) {
+        setResult(Activity.RESULT_OK, new Intent());
+        finish();
     }
 
     @Override

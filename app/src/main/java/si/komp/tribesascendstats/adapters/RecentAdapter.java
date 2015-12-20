@@ -3,6 +3,7 @@ package si.komp.tribesascendstats.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +81,7 @@ public class RecentAdapter extends BaseAdapter {
         try {
             ((ImageView) vi.findViewById(R.id.mapImage)).setImageResource(TribesUtils.MAP_DRAWABLES.get(mapPlayed));
         } catch (Exception e) {
-            new IllegalArgumentException(mapPlayed, e).printStackTrace();
+            Log.e("RecentAdapter.getView", "Error loading image for map " + mapPlayed);
         }
 
         String classes = dat.get("classesPlayed");

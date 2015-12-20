@@ -74,20 +74,14 @@ public class MatchDetailsActivity extends Activity {
         task.execute(PlayerActivity.url + PlayerActivity.user);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_refresh:
-                asyncDownloadData();
-                break;
-            case R.id.action_refresh2:
-                asyncDownloadData();
-                break;
-            default:
-                break;
-        }
+    // Will be called by the 'Reset search history' menu entry onClick
+    public void resetHistory(MenuItem item) {
+        new HistoryManager(this).resetHistory();
+    }
 
-        return super.onOptionsItemSelected(item);
+    // Will be called by the 'Refresh page' menu entry onClick
+    public void refreshPage(MenuItem item) {
+        asyncDownloadData();
     }
 
     @Override
@@ -175,7 +169,7 @@ public class MatchDetailsActivity extends Activity {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             String userName = result.get(position).get("name");
-                            String userText = String.format(getResources().getString(R.string.user_), userName);
+                            String userText = String.format(getResources().getString(R.string.user_format), userName);
 
                             Toast.makeText(ctx, userText, Toast.LENGTH_SHORT).show();
                             Intent returnIntent = new Intent();
@@ -198,7 +192,5 @@ public class MatchDetailsActivity extends Activity {
                 }
             }
         }
-
-
     }
 }

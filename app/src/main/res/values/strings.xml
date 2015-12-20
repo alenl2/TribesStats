@@ -80,5 +80,7 @@
     <string name="key_vehicle_kills">Vehicle kills</string>
     <string name="user_format">User: %s</string>
     <string name="match_details_format">Details of match %s</string>
+    <string name="delete_search_history">Delete search history</string>
+    <string name="time_toast_format">%1$s: %2$s</string>
 
 </resources>

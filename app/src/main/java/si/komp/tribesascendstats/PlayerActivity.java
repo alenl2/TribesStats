@@ -128,20 +128,14 @@ public class PlayerActivity extends FragmentActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_refresh:
-                asyncDownloadData();
-                break;
-            case R.id.action_refresh2:
-                asyncDownloadData();
-                break;
-            default:
-                break;
-        }
+    // Will be called by the 'Reset search history' menu entry onClick
+    public void resetHistory(MenuItem item) {
+        new HistoryManager(this).resetHistory();
+    }
 
-        return super.onOptionsItemSelected(item);
+    // Will be called by the 'Refresh page' menu entry onClick
+    public void refreshPage(MenuItem item) {
+        asyncDownloadData();
     }
 
     @Override
@@ -160,7 +154,7 @@ public class PlayerActivity extends FragmentActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             Integer num = getArguments().getInt(ARG_SECTION_NUMBER);
 
-            int rootId, lwId = 0;
+            int rootId, listViewId = 0;
             ListAdapter adapter = null;
             OnItemClickListener onItemClickListener = null;
 
@@ -169,7 +163,7 @@ public class PlayerActivity extends FragmentActivity {
                     rootId = R.layout.fragment_main_summary;
 
                     if (userData != null) {
-                        lwId = R.id.list;
+                        listViewId = R.id.list;
 
                         adapter = new Adapter((Activity) ctx, userData.get("playerSum"));
 
@@ -188,7 +182,7 @@ public class PlayerActivity extends FragmentActivity {
                     rootId = R.layout.fragment_main_recent;
 
                     if (userData != null) {
-                        lwId = R.id.listPlayer;
+                        listViewId = R.id.listPlayer;
 
                         adapter = new RecentAdapter((Activity) ctx, userData.get("recent"));
 
@@ -212,7 +206,7 @@ public class PlayerActivity extends FragmentActivity {
                     rootId = R.layout.fragment_main_time;
 
                     if (userData != null) {
-                        lwId = R.id.listViewTime;
+                        listViewId = R.id.listViewTime;
 
                         ArrayList<HashMap<String, String>> timesSet = userData.get("times");
                         Collections.sort(timesSet, new CustomMapComparator("timeForClass"));
@@ -231,7 +225,7 @@ public class PlayerActivity extends FragmentActivity {
 
             View rootView = inflater.inflate(rootId, container, false);
             if (userData != null) {
-                ListView listView = (ListView) rootView.findViewById(lwId);
+                ListView listView = (ListView) rootView.findViewById(listViewId);
                 listView.setAdapter(adapter);
                 listView.setOnItemClickListener(onItemClickListener);
                 listView.setScrollingCacheEnabled(false);
@@ -287,55 +281,52 @@ public class PlayerActivity extends FragmentActivity {
             return ret;
         }
 
-        private void addSummaryValue(@NonNull ArrayList<HashMap<String, String>> destination, int valNameId, @NonNull String valKey) {
+        @NonNull
+        private final ArrayList<HashMap<String, String>> playerSummary = new ArrayList<>();
+
+        private void addSummaryValue(int valNameId, @NonNull String valKey) {
             try {
                 Element element = doc.getElementById(valKey);
                 if (element != null)
-                    destination.add(setVal(getResources().getString(valNameId), element.html()));
+                    playerSummary.add(setVal(getResources().getString(valNameId), element.html()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         private void loadPlayerSummary() {
-            try {
-                ArrayList<HashMap<String, String>> playerSummary = new ArrayList<>();
+            addSummaryValue(R.string.key_name, "psName");
+            addSummaryValue(R.string.key_level, "psLevel");
+            addSummaryValue(R.string.key_last_online, "psLogin");
+            addSummaryValue(R.string.key_user_created, "psCreated");
+            addSummaryValue(R.string.key_matches_completed, "lblMatchesCompleted");
+            addSummaryValue(R.string.key_kills, "lblKills");
+            addSummaryValue(R.string.key_deaths, "lblDeaths");
+            addSummaryValue(R.string.key_assists, "lblAssists");
+            addSummaryValue(R.string.key_kill_death_ratio, "lblKDR");
+            addSummaryValue(R.string.key_ski_distance, "lblSkiDistance");
+            addSummaryValue(R.string.key_top_speed, "lblTopSpeed");
+            addSummaryValue(R.string.key_belt_kills, "lblBeltKills");
+            addSummaryValue(R.string.key_sprees, "lblSprees");
+            addSummaryValue(R.string.key_multi_kills, "lblMultiKill");
+            addSummaryValue(R.string.key_melee_kills, "lblMeleeKills");
+            addSummaryValue(R.string.key_midairs, "lblMidairs");
+            addSummaryValue(R.string.key_call_ins, "lblCallInsMade");
+            addSummaryValue(R.string.key_call_in_kills, "lblCallInKills");
+            addSummaryValue(R.string.key_full_regenerations, "lblFullRegeneration");
+            addSummaryValue(R.string.key_headshots, "lblHeadshots");
+            addSummaryValue(R.string.key_flag_caps, "lblFlagCaps");
+            addSummaryValue(R.string.key_flag_returns, "lblFlagReturns");
+            addSummaryValue(R.string.key_high_speed_grabs, "lblHighspeedGrabs");
+            addSummaryValue(R.string.key_generators_destroyed, "lblGensDestroyed");
+            addSummaryValue(R.string.key_base_assets_destroyed, "lblBaseAssetsDestroyed");
+            addSummaryValue(R.string.key_base_repairs, "lblBaseRepairs");
+            addSummaryValue(R.string.key_roadkills, "lblRoadkills");
+            addSummaryValue(R.string.key_vehicles_destroyed, "lblVehiclesDestroyed");
+            addSummaryValue(R.string.key_vehicle_kills, "lblVehicleKills");
+            addSummaryValue(R.string.key_base_upgrades, "lblBaseUpgrades");
 
-                addSummaryValue(playerSummary, R.string.key_name, "psName");
-                addSummaryValue(playerSummary, R.string.key_level, "psLevel");
-                addSummaryValue(playerSummary, R.string.key_last_online, "psLogin");
-                addSummaryValue(playerSummary, R.string.key_user_created, "psCreated");
-                addSummaryValue(playerSummary, R.string.key_matches_completed, "lblMatchesCompleted");
-                addSummaryValue(playerSummary, R.string.key_kills, "lblKills");
-                addSummaryValue(playerSummary, R.string.key_deaths, "lblDeaths");
-                addSummaryValue(playerSummary, R.string.key_assists, "lblAssists");
-                addSummaryValue(playerSummary, R.string.key_kill_death_ratio, "lblKDR");
-                addSummaryValue(playerSummary, R.string.key_ski_distance, "lblSkiDistance");
-                addSummaryValue(playerSummary, R.string.key_top_speed, "lblTopSpeed");
-                addSummaryValue(playerSummary, R.string.key_belt_kills, "lblBeltKills");
-                addSummaryValue(playerSummary, R.string.key_sprees, "lblSprees");
-                addSummaryValue(playerSummary, R.string.key_multi_kills, "lblMultiKill");
-                addSummaryValue(playerSummary, R.string.key_melee_kills, "lblMeleeKills");
-                addSummaryValue(playerSummary, R.string.key_midairs, "lblMidairs");
-                addSummaryValue(playerSummary, R.string.key_call_ins, "lblCallInsMade");
-                addSummaryValue(playerSummary, R.string.key_call_in_kills, "lblCallInKills");
-                addSummaryValue(playerSummary, R.string.key_full_regenerations, "lblFullRegeneration");
-                addSummaryValue(playerSummary, R.string.key_headshots, "lblHeadshots");
-                addSummaryValue(playerSummary, R.string.key_flag_caps, "lblFlagCaps");
-                addSummaryValue(playerSummary, R.string.key_flag_returns, "lblFlagReturns");
-                addSummaryValue(playerSummary, R.string.key_high_speed_grabs, "lblHighspeedGrabs");
-                addSummaryValue(playerSummary, R.string.key_generators_destroyed, "lblGensDestroyed");
-                addSummaryValue(playerSummary, R.string.key_base_assets_destroyed, "lblBaseAssetsDestroyed");
-                addSummaryValue(playerSummary, R.string.key_base_repairs, "lblBaseRepairs");
-                addSummaryValue(playerSummary, R.string.key_roadkills, "lblRoadkills");
-                addSummaryValue(playerSummary, R.string.key_vehicles_destroyed, "lblVehiclesDestroyed");
-                addSummaryValue(playerSummary, R.string.key_vehicle_kills, "lblVehicleKills");
-                addSummaryValue(playerSummary, R.string.key_base_upgrades, "lblBaseUpgrades");
-
-                ret.put("playerSum", playerSummary);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            ret.put("playerSum", playerSummary);
         }
 
         /**
@@ -503,6 +494,11 @@ public class PlayerActivity extends FragmentActivity {
                 try {
                     String playerTitleFormatter = getString(R.string.player_title_format);
                     String username = result.get("playerSum").get(0).get("value");
+                    try {
+                        new HistoryManager(ctx).addUser(username);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     setTitle(String.format(playerTitleFormatter, username));
                     userData = result;
                     /*
