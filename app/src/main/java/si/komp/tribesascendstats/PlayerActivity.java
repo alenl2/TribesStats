@@ -153,20 +153,15 @@ public class PlayerActivity extends FragmentActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             Integer num = getArguments().getInt(ARG_SECTION_NUMBER);
-
             int rootId, listViewId = 0;
             ListAdapter adapter = null;
             OnItemClickListener onItemClickListener = null;
-
             switch (num) {
                 case 1:
                     rootId = R.layout.fragment_main_summary;
-
                     if (userData != null) {
                         listViewId = R.id.list;
-
                         adapter = new Adapter((Activity) ctx, userData.get("playerSum"));
-
                         onItemClickListener = new OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -177,15 +172,11 @@ public class PlayerActivity extends FragmentActivity {
                         };
                     }
                     break;
-
                 case 2:
                     rootId = R.layout.fragment_main_recent;
-
                     if (userData != null) {
                         listViewId = R.id.listPlayer;
-
                         adapter = new RecentAdapter((Activity) ctx, userData.get("recent"));
-
                         onItemClickListener = new OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -201,17 +192,13 @@ public class PlayerActivity extends FragmentActivity {
                         };
                     }
                     break;
-
                 default:
                     rootId = R.layout.fragment_main_time;
-
                     if (userData != null) {
                         listViewId = R.id.listViewTime;
-
                         ArrayList<HashMap<String, String>> timesSet = userData.get("times");
                         Collections.sort(timesSet, new CustomMapComparator("timeForClass"));
                         adapter = new TimeAdapter((Activity) ctx, timesSet);
-
                         onItemClickListener = new OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -222,7 +209,6 @@ public class PlayerActivity extends FragmentActivity {
                         };
                     }
             }
-
             View rootView = inflater.inflate(rootId, container, false);
             if (userData != null) {
                 ListView listView = (ListView) rootView.findViewById(listViewId);

@@ -78,4 +78,6 @@
     <string name="user_format">Utente: %s</string>
     <string name="match_details_format">Dettagli partita %s</string>
     <string name="delete_search_history">Cancella la cronologia ricerche</string>
+    <string name="KD">Uccisioni/Morti</string>
+    <string name="time_toast_format">%1$s: %2$s</string>
 </resources>
