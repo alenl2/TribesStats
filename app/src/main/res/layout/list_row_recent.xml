@@ -37,6 +37,94 @@
                 android:text="@string/mapName"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/Image1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
+                    android:maxHeight="40dp"
+                    android:maxWidth="40dp" />
+
+                <ImageView
+                    android:id="@+id/Image2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
+                    android:maxHeight="40dp"
+                    android:maxWidth="40dp" />
+
+                <ImageView
+                    android:id="@+id/Image3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
+                    android:maxHeight="40dp"
+                    android:maxWidth="40dp" />
+
+                <ImageView
+                    android:id="@+id/Image4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
+                    android:maxHeight="40dp"
+                    android:maxWidth="40dp" />
+
+                <ImageView
+                    android:id="@+id/Image5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
+                    android:maxHeight="40dp"
+                    android:maxWidth="40dp" />
+
+                <ImageView
+                    android:id="@+id/Image6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
+                    android:maxHeight="40dp"
+                    android:maxWidth="40dp" />
+
+                <ImageView
+                    android:id="@+id/Image7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
+                    android:maxHeight="40dp"
+                    android:maxWidth="40dp" />
+
+                <ImageView
+                    android:id="@+id/Image8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
+                    android:maxHeight="40dp"
+                    android:maxWidth="40dp" />
+
+                <ImageView
+                    android:id="@+id/image9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/classPic"
+                    android:maxHeight="40dp"
+                    android:maxWidth="40dp" />
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/mapTimeText"
                 android:layout_width="wrap_content"
@@ -183,93 +271,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" >
-
-                <ImageView
-                    android:id="@+id/Image1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/classPic"
-                    android:maxHeight="40dp"
-                    android:maxWidth="40dp" />
-
-                <ImageView
-                    android:id="@+id/Image2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/classPic"
-                    android:maxHeight="40dp"
-                    android:maxWidth="40dp" />
-
-                <ImageView
-                    android:id="@+id/Image3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/classPic"
-                    android:maxHeight="40dp"
-                    android:maxWidth="40dp" />
-
-                <ImageView
-                    android:id="@+id/Image4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/classPic"
-                    android:maxHeight="40dp"
-                    android:maxWidth="40dp" />
-
-                <ImageView
-                    android:id="@+id/Image5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/classPic"
-                    android:maxHeight="40dp"
-                    android:maxWidth="40dp" />
-
-                <ImageView
-                    android:id="@+id/Image6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/classPic"
-                    android:maxHeight="40dp"
-                    android:maxWidth="40dp" />
-
-                <ImageView
-                    android:id="@+id/Image7"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/classPic"
-                    android:maxHeight="40dp"
-                    android:maxWidth="40dp" />
-
-                <ImageView
-                    android:id="@+id/Image8"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/classPic"
-                    android:maxHeight="40dp"
-                    android:maxWidth="40dp" />
-
-                <ImageView
-                    android:id="@+id/image9"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/classPic"
-                    android:maxHeight="40dp"
-                    android:maxWidth="40dp" />
-
-            </LinearLayout>
         </LinearLayout>
 
 

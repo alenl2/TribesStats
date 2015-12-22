@@ -14,9 +14,9 @@ import android.widget.TextView;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import si.komp.tribesascendstats.R;
 import si.komp.tribesascendstats.TribesUtils;
@@ -61,14 +61,15 @@ public class RecentAdapter extends BaseAdapter {
         HashMap<String, String> dat = data.get(position);
         text1.setText(dat.get("mapPlayed"));
 
-        SimpleDateFormat format1 = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa", Locale.getDefault());
+        String timePlayed = dat.get("timePlayed");
         try {
-            Date playTime = format1.parse(dat.get("timePlayed"));
-            text2.setText(playTime.toString());
+            SimpleDateFormat format1 = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa", Locale.getDefault());
+            format1.setTimeZone(TimeZone.getTimeZone("GMT-1:00"));
+            text2.setText(format1.format(format1.parse(timePlayed)));
         } catch (ParseException e1) {
-            text2.setText(dat.get("timePlayed"));
+            text2.setText(timePlayed);
+            e1.printStackTrace();
         }
-
 
         text3.setText(dat.get("gameKdRatio"));
         text4.setText(dat.get("gameDeaths"));
