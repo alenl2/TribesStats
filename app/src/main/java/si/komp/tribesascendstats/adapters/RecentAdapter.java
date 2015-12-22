@@ -16,7 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import si.komp.tribesascendstats.R;
 import si.komp.tribesascendstats.TribesUtils;
@@ -64,7 +63,6 @@ public class RecentAdapter extends BaseAdapter {
         String timePlayed = dat.get("timePlayed");
         try {
             SimpleDateFormat format1 = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa", Locale.getDefault());
-            format1.setTimeZone(TimeZone.getTimeZone("GMT-1:00"));
             text2.setText(format1.format(format1.parse(timePlayed)));
         } catch (ParseException e1) {
             text2.setText(timePlayed);
