@@ -63,14 +63,14 @@ public class TribesUtils {
         MAP_DRAWABLES.put("drydocknight", R.drawable.drydocknight);
         MAP_DRAWABLES.put("fraytown", R.drawable.fraytown);
         MAP_DRAWABLES.put("hinterlands", R.drawable.hinterlands);
-        MAP_DRAWABLES.put("icecoaster", null); // TODO
+        MAP_DRAWABLES.put("icecoaster", R.drawable.icecoaster);
         MAP_DRAWABLES.put("inferno", R.drawable.inferno);
         MAP_DRAWABLES.put("katabatic", R.drawable.katabatic);
         MAP_DRAWABLES.put("lavaarena", R.drawable.lavaarena);
         MAP_DRAWABLES.put("miasma", R.drawable.miasma);
         MAP_DRAWABLES.put("nightabatic", R.drawable.nightabatic);
         MAP_DRAWABLES.put("outskirts", R.drawable.outskirts);
-        MAP_DRAWABLES.put("perdition", null); // TODO
+        MAP_DRAWABLES.put("perdition", R.drawable.perdition);
         MAP_DRAWABLES.put("permafrost", R.drawable.permafrost);
         MAP_DRAWABLES.put("quicksand", R.drawable.quicksand);
         MAP_DRAWABLES.put("raindance", R.drawable.raindance);
@@ -79,9 +79,9 @@ public class TribesUtils {
         MAP_DRAWABLES.put("sunstar", R.drawable.sunstar);
         MAP_DRAWABLES.put("tartarus", R.drawable.tartarus);
         MAP_DRAWABLES.put("templeruins", R.drawable.templeruins);
-        MAP_DRAWABLES.put("terminus", null); // TODO
+        MAP_DRAWABLES.put("terminus", R.drawable.terminus);
         MAP_DRAWABLES.put("undercroft", R.drawable.undercroft);
         MAP_DRAWABLES.put("walledin", R.drawable.walledin);
-        MAP_DRAWABLES.put("whiteout", null); // TODO
+        MAP_DRAWABLES.put("whiteout", R.drawable.whiteout);
     }
 }
