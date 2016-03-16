@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -21,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -34,7 +36,6 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -74,7 +75,7 @@ public class PlayerActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(mTracker!=null){
+        if (mTracker != null) {
             mTracker.setScreenName("PlayerActivity");
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         }
@@ -103,18 +104,18 @@ public class PlayerActivity extends FragmentActivity {
         }
     }
 
-    void asyncDownloadData() {
+    private void asyncDownloadData() {
         if (isNetworkAvailable()) {
             DownloadPage task = new DownloadPage();
             task.execute(url + user);
         } else {
-            Toast.makeText(ctx, "No internet access", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ctx, getResources().getString(R.string.no_internet_access), Toast.LENGTH_SHORT).show();
             finish();
         }
 
     }
 
-    HashMap<String, String> setVal(String name, String value) {
+    private HashMap<String, String> setVal(String name, String value) {
         HashMap<String, String> ret = new HashMap<>();
         ret.put("name", name);
         ret.put("value", value);
@@ -127,20 +128,14 @@ public class PlayerActivity extends FragmentActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_refresh:
-                asyncDownloadData();
-                break;
-            case R.id.action_refresh2:
-                asyncDownloadData();
-                break;
-            default:
-                break;
-        }
+    // Will be called by the 'Reset search history' menu entry onClick
+    public void resetHistory(MenuItem item) {
+        new HistoryManager(this).resetHistory();
+    }
 
-        return super.onOptionsItemSelected(item);
+    // Will be called by the 'Refresh page' menu entry onClick
+    public void refreshPage(MenuItem item) {
+        asyncDownloadData();
     }
 
     @Override
@@ -158,421 +153,339 @@ public class PlayerActivity extends FragmentActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             Integer num = getArguments().getInt(ARG_SECTION_NUMBER);
-            if (num == 1) {
-                View rootView = inflater.inflate(R.layout.fragment_main_summary, container, false);
-                if (userData != null) {
-                    Adapter adapter = new Adapter((Activity) ctx, userData.get("playerSum"));
-                    ListView lw = ((ListView) rootView.findViewById(R.id.list));
-                    lw.setAdapter(adapter);
-                    // Click event for single list row
-                    lw.setOnItemClickListener(new OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            String name = userData.get("playerSum").get(position).get("name");
-                            String value = userData.get("playerSum").get(position).get("value");
-                            Toast.makeText(ctx, name + ": " + value, Toast.LENGTH_SHORT).show();
-                        }
-
-                    });
-                }
-                return rootView;
-            } else if (num == 2) {
-                View rootView = inflater.inflate(R.layout.fragment_main_recent, container, false);
-                if (userData != null) {
-                    RecentAdapter adapter = new RecentAdapter((Activity) ctx, userData.get("recent"));
-                    ListView lw = ((ListView) rootView.findViewById(R.id.listPlayer));
-                    lw.setScrollingCacheEnabled(false);
-                    lw.setAdapter(adapter);
-                    lw.setOnItemClickListener(new OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            if (!userData.get("recent").get(position).get("matchDetails").equals("NoDetails!!!")) {
-                                Intent intent = new Intent(ctx, MatchDetailsActivity.class);
-                                intent.putExtra("matchDetails", userData.get("recent").get(position).get("matchDetails"));
-                                getActivity().startActivityForResult(intent, 1);
-                            } else {
-                                Toast.makeText(ctx, "Match was allredy removed", Toast.LENGTH_SHORT).show();
+            int rootId, listViewId = 0;
+            ListAdapter adapter = null;
+            OnItemClickListener onItemClickListener = null;
+            switch (num) {
+                case 1:
+                    rootId = R.layout.fragment_main_summary;
+                    if (userData != null) {
+                        listViewId = R.id.list;
+                        adapter = new Adapter((Activity) ctx, userData.get("playerSum"));
+                        onItemClickListener = new OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                String name = userData.get("playerSum").get(position).get("name");
+                                String value = userData.get("playerSum").get(position).get("value");
+                                Toast.makeText(ctx, name + ": " + value, Toast.LENGTH_SHORT).show();
                             }
-
-                        }
-
-                    });
-                }
-                return rootView;
-            } else {
-                View rootView = inflater.inflate(R.layout.fragment_main_time, container, false);
-                if (userData != null) {
-                    ArrayList<HashMap<String, String>> unsorted = userData.get("times");
-                    Collections.sort(unsorted, new CustomComparator2());
-
-
-                    TimeAdapter adapter = new TimeAdapter((Activity) ctx, unsorted);
-                    ListView lw = ((ListView) rootView.findViewById(R.id.listViewTime));
-                    lw.setScrollingCacheEnabled(false);
-                    lw.setAdapter(adapter);
-                    lw.setOnItemClickListener(new OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            Intent it = new Intent(ctx, TimeDetails.class);
-                            it.putExtra("data", userData.get("times").get(position));
-                            getActivity().startActivityForResult(it, 2);
-                        }
-                    });
-                }
-                return rootView;
+                        };
+                    }
+                    break;
+                case 2:
+                    rootId = R.layout.fragment_main_recent;
+                    if (userData != null) {
+                        listViewId = R.id.listPlayer;
+                        adapter = new RecentAdapter((Activity) ctx, userData.get("recent"));
+                        onItemClickListener = new OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                String details = userData.get("recent").get(position).get("matchDetails");
+                                if (details.equals("NoDetails!!!")) {
+                                    Toast.makeText(ctx, getResources().getString(R.string.match_removed), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Intent intent = new Intent(ctx, MatchDetailsActivity.class);
+                                    intent.putExtra("matchDetails", details);
+                                    getActivity().startActivityForResult(intent, 1);
+                                }
+                            }
+                        };
+                    }
+                    break;
+                default:
+                    rootId = R.layout.fragment_main_time;
+                    if (userData != null) {
+                        listViewId = R.id.listViewTime;
+                        ArrayList<HashMap<String, String>> timesSet = userData.get("times");
+                        Collections.sort(timesSet, new CustomMapComparator("timeForClass"));
+                        adapter = new TimeAdapter((Activity) ctx, timesSet);
+                        onItemClickListener = new OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                Intent it = new Intent(ctx, TimeDetails.class);
+                                it.putExtra("data", userData.get("times").get(position));
+                                getActivity().startActivityForResult(it, 2);
+                            }
+                        };
+                    }
             }
+            View rootView = inflater.inflate(rootId, container, false);
+            if (userData != null) {
+                ListView listView = (ListView) rootView.findViewById(listViewId);
+                listView.setAdapter(adapter);
+                listView.setOnItemClickListener(onItemClickListener);
+                listView.setScrollingCacheEnabled(false);
+            }
+            return rootView;
         }
     }
 
     public class DownloadPage extends AsyncTask<String, Void, HashMap<String, ArrayList<HashMap<String, String>>>> {
+        private Document doc;
+        @NonNull
+        private final HashMap<String, ArrayList<HashMap<String, String>>> ret = new HashMap<>();
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             this.dialog.setCancelable(false);
-            this.dialog.setMessage("Please wait. Downloading data.");
+            this.dialog.setMessage(getResources().getString(R.string.downloading_data));
             this.dialog.show();
         }
 
         @Override
         protected HashMap<String, ArrayList<HashMap<String, String>>> doInBackground(String... urls) {
-
-            HashMap<String, ArrayList<HashMap<String, String>>> ret = new HashMap<>();
-
             for (String url : urls) {
                 try {
-                    Document doc = Jsoup.connect(url).get();
+                    doc = Jsoup.connect(url).get();
+
                     try {
-                        if (doc.getElementById("lblError").html().contains("No player")) {
+                        Element lblErrorElement = doc.getElementById("lblError");
+                        if (lblErrorElement != null && lblErrorElement.html().contains("No player"))
                             return ret;
-                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
                     try {
-                        viewState = doc.getElementById("__VIEWSTATE").attr("value");
+                        Element viewStateElement = doc.getElementById("__VIEWSTATE");
+                        viewState = viewStateElement.attr("value");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-                    // PLAYER
-                    ArrayList<HashMap<String, String>> playerSummary = new ArrayList<>();
-                    try {
-                        playerSummary.add(setVal("Name", doc.getElementById("psName").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Level", doc.getElementById("psLevel").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Last Online", doc.getElementById("psLogin").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("User Created", doc.getElementById("psCreated").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Matches Completed", doc.getElementById("lblMatchesCompleted").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Kills", doc.getElementById("lblKills").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Deaths", doc.getElementById("lblDeaths").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Assists", doc.getElementById("lblAssists").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("KDR", doc.getElementById("lblKDR").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Ski Distance", doc.getElementById("lblSkiDistance").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Top Speed", doc.getElementById("lblTopSpeed").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Belt Kills", doc.getElementById("lblBeltKills").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Sprees", doc.getElementById("lblSprees").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Multi Kill", doc.getElementById("lblMultiKill").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Melee Kills", doc.getElementById("lblMeleeKills").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Midairs", doc.getElementById("lblMidairs").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Call Ins Made", doc.getElementById("lblCallInsMade").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Call In Kills", doc.getElementById("lblCallInKills").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Full Regeneration", doc.getElementById("lblFullRegeneration").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Headshots", doc.getElementById("lblHeadshots").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Flag Caps", doc.getElementById("lblFlagCaps").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Flag Returns", doc.getElementById("lblFlagReturns").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Highspeed Grabs", doc.getElementById("lblHighspeedGrabs").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Gens Destroyed", doc.getElementById("lblGensDestroyed").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Base Assets Destroyed", doc.getElementById("lblBaseAssetsDestroyed").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Base Repairs", doc.getElementById("lblBaseRepairs").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Roadkills", doc.getElementById("lblRoadkills").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Vehicles Destroyed", doc.getElementById("lblVehiclesDestroyed").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Vehicle Kills", doc.getElementById("lblVehicleKills").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        playerSummary.add(setVal("Base Upgrades", doc.getElementById("lblBaseUpgrades").html()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        ret.put("playerSum", playerSummary);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    loadPlayerSummary();
 
-                    // RECENT MATCHES
-                    try {
-                        ArrayList<HashMap<String, String>> recent = new ArrayList<>();
-                        Elements games = doc.getElementById("historyTab").getElementsByClass("containerPh");
-                        for (Element game : games) {
-                            HashMap<String, String> playedGame = new HashMap<>();
+                    loadRecentMatches();
 
-                            try {
-                                playedGame.put("imageUrl", game.getElementsByClass("mapIcon").attr("src"));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                Elements classesPlayed = game.getElementById("iconContainer").getElementsByClass("classIcon");
-                                String classes = "";
-                                for (Element classPlayed : classesPlayed) {
-                                    try {
-                                        classes += classPlayed.attr("src") + ",";
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                playedGame.put("classesPlayed", classes);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                    loadClassTimes();
 
-                            try {
-                                playedGame.put("mapPlayed", game.getElementById("lblMapName").html());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                playedGame.put("timePlayed", game.getElementById("lblMapEntryDatetime").html());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                if (game.getElementById("btnGoToMap") != null) { //lots of null pointers here because hi-rez keeps only recent match history and when they dellete it the link is gone
-                                    playedGame.put("matchDetails", game.getElementById("btnGoToMap").attr("name"));
-                                } else {
-                                    playedGame.put("matchDetails", "NoDetails!!!");
-                                }
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                Element gameTable = game.getElementById("historyTable");
-                                Iterator<Element> ite = gameTable.select("span").iterator();
-                                try {
-                                    playedGame.put("gameKills", ite.next().html());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    playedGame.put("gameDeaths", ite.next().html());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    playedGame.put("gameAssists", ite.next().html());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    playedGame.put("gameKdRatio", ite.next().html());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    playedGame.put("gameScore", ite.next().html());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    playedGame.put("gameTimeInMatch", ite.next().html());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    recent.add(playedGame);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        try {
-                            ret.put("recent", recent);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    // TIME PLAYED
-                    // TODO this to tab3
-                    try {
-                        Elements statsTab = doc.getElementById("tabs").getElementById("statsTab").getAllElements();
-
-                        ArrayList<HashMap<String, String>> times = new ArrayList<>();
-
-                        ArrayList<String> test = new ArrayList<>(); //used to check if that element was allredy in there because tribes ppl used id tag on one page 10 times >*
-
-                        for (Element tab : statsTab) {
-                            if (tab.hasAttr("id")) {
-                                if (!tab.attr("id").equals("panelMap")) {
-                                    continue;
-                                }
-                                HashMap<String, String> toAdd = new HashMap<>();
-                                try {
-                                    String currentClass = tab.getElementById("lblTimePlayedClass").html();
-                                    if (test.contains(currentClass)) {
-                                        continue;
-                                    }
-                                    test.add(currentClass);
-                                    toAdd.put("name", currentClass);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                Integer classPlayTime = 0;
-                                try {
-                                    for (Element mapTime : tab.getElementsByClass("timeplayed")) {
-                                        try {
-                                            String playedMap = mapTime.getElementsByClass("map").get(0).html();
-                                            String timePlayed = mapTime.getElementsByClass("time").get(0).html().replace("&lt; ", "");
-                                            classPlayTime += Integer.parseInt(timePlayed);
-
-                                            toAdd.put("map-" + playedMap, timePlayed);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-
-                                    }
-                                    toAdd.put("timeForClass", String.valueOf(classPlayTime));
-                                    times.add(toAdd);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                        ret.put("times", times);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
             return ret;
-        }        private final ProgressDialog dialog = new ProgressDialog(ctx);
+        }
+
+        @NonNull
+        private final ArrayList<HashMap<String, String>> playerSummary = new ArrayList<>();
+
+        private void addSummaryValue(int valNameId, @NonNull String valKey) {
+            try {
+                Element element = doc.getElementById(valKey);
+                if (element != null)
+                    playerSummary.add(setVal(getResources().getString(valNameId), element.html()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void loadPlayerSummary() {
+            addSummaryValue(R.string.key_name, "psName");
+            addSummaryValue(R.string.key_level, "psLevel");
+            addSummaryValue(R.string.key_last_online, "psLogin");
+            addSummaryValue(R.string.key_user_created, "psCreated");
+            addSummaryValue(R.string.key_matches_completed, "lblMatchesCompleted");
+            addSummaryValue(R.string.key_kills, "lblKills");
+            addSummaryValue(R.string.key_deaths, "lblDeaths");
+            addSummaryValue(R.string.key_assists, "lblAssists");
+            addSummaryValue(R.string.key_kill_death_ratio, "lblKDR");
+            addSummaryValue(R.string.key_ski_distance, "lblSkiDistance");
+            addSummaryValue(R.string.key_top_speed, "lblTopSpeed");
+            addSummaryValue(R.string.key_belt_kills, "lblBeltKills");
+            addSummaryValue(R.string.key_sprees, "lblSprees");
+            addSummaryValue(R.string.key_multi_kills, "lblMultiKill");
+            addSummaryValue(R.string.key_melee_kills, "lblMeleeKills");
+            addSummaryValue(R.string.key_midairs, "lblMidairs");
+            addSummaryValue(R.string.key_call_ins, "lblCallInsMade");
+            addSummaryValue(R.string.key_call_in_kills, "lblCallInKills");
+            addSummaryValue(R.string.key_full_regenerations, "lblFullRegeneration");
+            addSummaryValue(R.string.key_headshots, "lblHeadshots");
+            addSummaryValue(R.string.key_flag_caps, "lblFlagCaps");
+            addSummaryValue(R.string.key_flag_returns, "lblFlagReturns");
+            addSummaryValue(R.string.key_high_speed_grabs, "lblHighspeedGrabs");
+            addSummaryValue(R.string.key_generators_destroyed, "lblGensDestroyed");
+            addSummaryValue(R.string.key_base_assets_destroyed, "lblBaseAssetsDestroyed");
+            addSummaryValue(R.string.key_base_repairs, "lblBaseRepairs");
+            addSummaryValue(R.string.key_roadkills, "lblRoadkills");
+            addSummaryValue(R.string.key_vehicles_destroyed, "lblVehiclesDestroyed");
+            addSummaryValue(R.string.key_vehicle_kills, "lblVehicleKills");
+            addSummaryValue(R.string.key_base_upgrades, "lblBaseUpgrades");
+
+            ret.put("playerSum", playerSummary);
+        }
+
+        /**
+         * Adds the next match detail from {@param origin} to {@param destination}, using {@param name} as key
+         *
+         * @param origin      Where the detail is read
+         * @param destination Where the detail is written
+         * @param name        Key of the detail
+         */
+        private void addGameDetail(@NonNull Iterator<Element> origin, @NonNull HashMap<String, String> destination, @NonNull String name) {
+            try {
+                String value = origin.next().html();
+
+                if (name.equals("gameTimeInMatch")) {
+                    // I18n of the time value spent in game
+                    try {
+                        String minutes = value.replace(" mins", "");
+                        value = String.format(getResources().getString(R.string.minutes_short_format), minutes);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                destination.put(name, value);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void loadGameDetails(@NonNull Element origin, @NonNull HashMap<String, String> destination) {
+            Element gameTable = origin.getElementById("historyTable");
+            Iterator<Element> iterator = gameTable.select("span").iterator();
+            addGameDetail(iterator, destination, "gameKills");
+            addGameDetail(iterator, destination, "gameDeaths");
+            addGameDetail(iterator, destination, "gameAssists");
+            addGameDetail(iterator, destination, "gameKdRatio");
+            addGameDetail(iterator, destination, "gameScore");
+            addGameDetail(iterator, destination, "gameTimeInMatch");
+
+        }
+
+        private void loadPlayedGame(@NonNull Element origin, @NonNull ArrayList<HashMap<String, String>> destination) {
+            HashMap<String, String> playedGame = new HashMap<>();
+
+            try {
+                playedGame.put("imageUrl", origin.getElementsByClass("mapIcon").attr("src"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                Elements classesPlayed = origin.getElementById("iconContainer").getElementsByClass("classIcon");
+                StringBuilder classes = new StringBuilder("");
+
+                for (Element classPlayed : classesPlayed) {
+                    try {
+                        classes.append(classPlayed.attr("src"));
+                        classes.append(',');
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                playedGame.put("classesPlayed", classes.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                playedGame.put("mapPlayed", origin.getElementById("lblMapName").html());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                playedGame.put("timePlayed", origin.getElementById("lblMapEntryDatetime").html());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                if (origin.getElementById("btnGoToMap") != null) { //lots of null pointers here because hi-rez keeps only recent match history and when they dellete it the link is gone
+                    playedGame.put("matchDetails", origin.getElementById("btnGoToMap").attr("name"));
+                } else {
+                    playedGame.put("matchDetails", "NoDetails!!!");
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            loadGameDetails(origin, playedGame);
+
+            try {
+                destination.add(playedGame);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void loadRecentMatches() {
+            try {
+                ArrayList<HashMap<String, String>> recent = new ArrayList<>();
+                Elements games = doc.getElementById("historyTab").getElementsByClass("containerPh");
+                for (Element game : games)
+                    loadPlayedGame(game, recent);
+
+                ret.put("recent", recent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void loadClassTimes() {
+            try {
+                Elements statsTab = doc.getElementById("tabs").getElementById("statsTab").getAllElements();
+
+                ArrayList<HashMap<String, String>> times = new ArrayList<>();
+
+                ArrayList<String> test = new ArrayList<>(); //used to check if that element was allredy in there because tribes ppl used id tag on one page 10 times >*
+
+                for (Element tab : statsTab) {
+                    if (tab.hasAttr("id") && tab.attr("id").equals("panelMap")) {
+                        HashMap<String, String> toAdd = new HashMap<>();
+
+                        try {
+                            String currentClass = tab.getElementById("lblTimePlayedClass").html();
+
+                            if (test.contains(currentClass)) {
+                                continue;
+                            }
+
+                            test.add(currentClass);
+
+                            toAdd.put("name", currentClass);
+
+                            Integer classPlayTime = 0;
+
+                            for (Element mapTime : tab.getElementsByClass("timeplayed")) {
+                                try {
+                                    String playedMap = mapTime.getElementsByClass("map").get(0).html();
+                                    String timePlayed = mapTime.getElementsByClass("time").get(0).html().replace("&lt; ", "");
+                                    classPlayTime += Integer.parseInt(timePlayed);
+
+                                    toAdd.put("map-" + playedMap, timePlayed);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                            toAdd.put("timeForClass", String.valueOf(classPlayTime));
+                            times.add(toAdd);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                ret.put("times", times);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        private final ProgressDialog dialog = new ProgressDialog(ctx);
 
         @Override
         protected void onPostExecute(HashMap<String, ArrayList<HashMap<String, String>>> result) {
             if (result.containsKey("playerSum")) {
                 try {
-                    setTitle("Stats for:" + result.get("playerSum").get(0).get("value") + " - Level:" + result.get("playerSum").get(1).get("value"));
+                    String playerTitleFormatter = getString(R.string.player_title_format);
+                    String username = result.get("playerSum").get(0).get("value");
+                    try {
+                        new HistoryManager(ctx).addUser(username);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    setTitle(String.format(playerTitleFormatter, username));
                     userData = result;
                     /*
       The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -583,8 +496,8 @@ public class PlayerActivity extends FragmentActivity {
 	  {@link android.support.v4.app.FragmentStatePagerAdapter}.
 	 */
                     SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-					/*
-	  The {@link ViewPager} that will host the section contents.
+                    /*
+      The {@link ViewPager} that will host the section contents.
 	 */
                     ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
                     mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -592,19 +505,14 @@ public class PlayerActivity extends FragmentActivity {
                         dialog.dismiss();
                     }
                 } catch (Exception ex) {
-                    Toast.makeText(ctx, "An error occurred. Check internet connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx, getResources().getString(R.string.internet_error), Toast.LENGTH_SHORT).show();
                     finish();
                 }
             } else {
-                Toast.makeText(ctx, "User not found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ctx, getResources().getString(R.string.user_not_found), Toast.LENGTH_SHORT).show();
                 finish();
             }
-
         }
-
-
-
-
     }
 
     /**
@@ -647,22 +555,5 @@ public class PlayerActivity extends FragmentActivity {
             }
             return null;
         }
-    }
-}
-
-
-class CustomComparator2 implements Comparator<HashMap<String, String>> {
-    @Override
-    public int compare(HashMap<String, String> o1, HashMap<String, String> o2) {
-        try {
-            if (Integer.parseInt(o1.get("timeForClass")) >= Integer.parseInt(o2.get("timeForClass"))) {
-                return -1;
-            }
-            return 1;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
-
     }
 }

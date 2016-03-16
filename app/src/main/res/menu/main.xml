@@ -1,14 +1,14 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/action_refresh2"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
-    
-        <item android:id="@+id/action_refresh"
-          android:icon="@drawable/ic_action_refresh"
-          android:title="@string/action_settings"
-          android:showAsAction="ifRoom" />
-        
+        android:id="@+id/action_refresh"
+        android:icon="@drawable/ic_action_refresh"
+        android:onClick="refreshPage"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_settings" />
+
+    <item
+        android:id="@+id/action_delete_search_history"
+        android:onClick="resetHistory"
+        android:title="@string/delete_search_history" />
 </menu>
