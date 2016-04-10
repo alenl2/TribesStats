@@ -8,9 +8,6 @@
     <string name="Submit">Cerca</string>
     <string name="TimePlayed">Tempo</string>
     <string name="action_settings">Aggiorna</string>
-    <string name="title_section1">Sommario giocatore</string>
-    <string name="title_section2">Partite recenti</string>
-    <string name="title_section3">Tempo giocato</string>
     <string name="search">Cerca un giocatore</string>
     <string name="time">, tempo:</string>
     <string name="kills">, kill: </string>

@@ -3,9 +3,11 @@
 
     <string name="app_name">Tribes Ascend Stats</string>
     <string name="action_settings">Refresh</string>
-    <string name="title_section1">Player Summary</string>
-    <string name="title_section2">Recent Matches</string>
-    <string name="title_section3">Time Played</string>
+    <string name="title_section1">Base Stats</string>
+    <string name="title_section2">Match Averages</string>
+    <string name="title_section3">Kill Stats</string>
+    <string name="title_section4">Time Stats</string>
+    <string name="title_section5">Game Mode Stats</string>
     <string name="title_activity_match_details">MatchDetails</string>
     <string name="name" translatable="false" />
     <string name="Submit">Submit</string>
@@ -49,6 +51,7 @@
     <string name="player_title_format">Stats for %s</string>
     <string name="n_pathfinder">Pathfinder (Naked)</string>
     <string name="key_name">Name</string>
+    <string name="key_playerRank">Rank</string>
     <string name="key_last_online">Last Online</string>
     <string name="key_level">Level</string>
     <string name="key_user_created">User created</string>
@@ -82,5 +85,13 @@
     <string name="match_details_format">Details of match %s</string>
     <string name="delete_search_history">Delete search history</string>
     <string name="time_toast_format">%1$s: %2$s</string>
+    <string name="key_stats_updated">Stats Updated</string>
 
+    <string name="key_arena">Arena</string>
+    <string name="key_cah">CAH</string>
+    <string name="key_ctf">CTF</string>
+    <string name="key_ctfblitz">CTF Blitz</string>
+    <string name="key_rabbit">Rabbit</string>
+    <string name="key_tdm">TDM</string>
+    <string name="credit">Stats provided by <font color="#3399ff">wilderzone.org</font></string>
 </resources>

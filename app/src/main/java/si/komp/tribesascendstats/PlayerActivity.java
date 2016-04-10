@@ -7,9 +7,9 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -20,10 +20,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
@@ -35,23 +34,29 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
-import si.komp.tribesascendstats.adapters.Adapter;
-import si.komp.tribesascendstats.adapters.RecentAdapter;
+import si.komp.tribesascendstats.adapters.StatsAdapter;
 import si.komp.tribesascendstats.adapters.TimeAdapter;
 
 public class PlayerActivity extends FragmentActivity {
 
-    public static final String url = "https://account.hirezstudios.com/tribesascend/stats.aspx?player=";
+    public enum PageName{
+        Player,
+        BaseStats,
+        MatchAverages,
+        KillStats,
+        ClassTimes,
+        GameModeStas
+    }
+
+    public static final String url = "http://www.wilderzone.org/player/";
     public static String user;
-    static String viewState = "";
     static boolean flag = true;
     private static Context ctx;
-    private static HashMap<String, ArrayList<HashMap<String, String>>> userData;
+    private static HashMap<PageName, List<StatItem>> userData;
     private Tracker mTracker;
 
     @Override
@@ -62,7 +67,6 @@ public class PlayerActivity extends FragmentActivity {
 
         Intent intent = getIntent();
         user = intent.getStringExtra("userName");
-
 
         if (flag) {
             asyncDownloadData();
@@ -88,22 +92,6 @@ public class PlayerActivity extends FragmentActivity {
         super.onConfigurationChanged(newConfig);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                user = data.getStringExtra("showUser");
-                asyncDownloadData();
-            }
-        }
-
-        if (requestCode == 2) {
-            if (resultCode == RESULT_OK) {
-                asyncDownloadData();
-            }
-        }
-    }
-
     private void asyncDownloadData() {
         if (isNetworkAvailable()) {
             DownloadPage task = new DownloadPage();
@@ -113,13 +101,6 @@ public class PlayerActivity extends FragmentActivity {
             finish();
         }
 
-    }
-
-    private HashMap<String, String> setVal(String name, String value) {
-        HashMap<String, String> ret = new HashMap<>();
-        ret.put("name", name);
-        ret.put("value", value);
-        return ret;
     }
 
     private boolean isNetworkAvailable() {
@@ -153,78 +134,37 @@ public class PlayerActivity extends FragmentActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             Integer num = getArguments().getInt(ARG_SECTION_NUMBER);
-            int rootId, listViewId = 0;
             ListAdapter adapter = null;
-            OnItemClickListener onItemClickListener = null;
             switch (num) {
+                case 0:
+                    adapter = new StatsAdapter((Activity)ctx, userData.get(PageName.BaseStats));
+                    break;
                 case 1:
-                    rootId = R.layout.fragment_main_summary;
-                    if (userData != null) {
-                        listViewId = R.id.list;
-                        adapter = new Adapter((Activity) ctx, userData.get("playerSum"));
-                        onItemClickListener = new OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                String name = userData.get("playerSum").get(position).get("name");
-                                String value = userData.get("playerSum").get(position).get("value");
-                                Toast.makeText(ctx, name + ": " + value, Toast.LENGTH_SHORT).show();
-                            }
-                        };
-                    }
+                    adapter = new StatsAdapter((Activity)ctx, userData.get(PageName.MatchAverages));
                     break;
                 case 2:
-                    rootId = R.layout.fragment_main_recent;
-                    if (userData != null) {
-                        listViewId = R.id.listPlayer;
-                        adapter = new RecentAdapter((Activity) ctx, userData.get("recent"));
-                        onItemClickListener = new OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                String details = userData.get("recent").get(position).get("matchDetails");
-                                if (details.equals("NoDetails!!!")) {
-                                    Toast.makeText(ctx, getResources().getString(R.string.match_removed), Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Intent intent = new Intent(ctx, MatchDetailsActivity.class);
-                                    intent.putExtra("matchDetails", details);
-                                    getActivity().startActivityForResult(intent, 1);
-                                }
-                            }
-                        };
-                    }
+                    adapter = new StatsAdapter((Activity)ctx, userData.get(PageName.KillStats));
                     break;
-                default:
-                    rootId = R.layout.fragment_main_time;
-                    if (userData != null) {
-                        listViewId = R.id.listViewTime;
-                        ArrayList<HashMap<String, String>> timesSet = userData.get("times");
-                        Collections.sort(timesSet, new CustomMapComparator("timeForClass"));
-                        adapter = new TimeAdapter((Activity) ctx, timesSet);
-                        onItemClickListener = new OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                Intent it = new Intent(ctx, TimeDetails.class);
-                                it.putExtra("data", userData.get("times").get(position));
-                                getActivity().startActivityForResult(it, 2);
-                            }
-                        };
-                    }
+                case 3:
+                    adapter = new StatsAdapter((Activity)ctx, userData.get(PageName.GameModeStas));
+                    break;
+                case 4:
+                    adapter = new TimeAdapter((Activity)ctx, userData.get(PageName.ClassTimes));
+                    break;
             }
-            View rootView = inflater.inflate(rootId, container, false);
-            if (userData != null) {
-                ListView listView = (ListView) rootView.findViewById(listViewId);
-                listView.setAdapter(adapter);
-                listView.setOnItemClickListener(onItemClickListener);
-                listView.setScrollingCacheEnabled(false);
-            }
+            View rootView = inflater.inflate(R.layout.fragment_main_summary, container, false);
+            ListView listView = (ListView) rootView.findViewById(R.id.list);
+            listView.setAdapter(adapter);
+
             return rootView;
         }
     }
 
-    public class DownloadPage extends AsyncTask<String, Void, HashMap<String, ArrayList<HashMap<String, String>>>> {
-        private Document doc;
-        @NonNull
-        private final HashMap<String, ArrayList<HashMap<String, String>>> ret = new HashMap<>();
+    private StatItem getStatItem(int resourceName, String value, String extra){
+        return new StatItem(getResources().getString(resourceName), value, extra);
+    }
 
+    public class DownloadPage extends AsyncTask<String, Void, HashMap<PageName, List<StatItem>>> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -234,252 +174,96 @@ public class PlayerActivity extends FragmentActivity {
         }
 
         @Override
-        protected HashMap<String, ArrayList<HashMap<String, String>>> doInBackground(String... urls) {
+        protected HashMap<PageName, List<StatItem>> doInBackground(String... urls) {
+            HashMap<PageName, List<StatItem>> ret = new HashMap<>();
+            List<StatItem> player = new ArrayList<>();
+            List<StatItem> timeStats = new ArrayList<>();
+            List<StatItem> killStats = new ArrayList<>();
+            List<StatItem> matchStats = new ArrayList<>();
+            List<StatItem> baseStats  = new ArrayList<>();
+            List<StatItem> gameModeStats  = new ArrayList<>();
+
             for (String url : urls) {
                 try {
-                    doc = Jsoup.connect(url).get();
+                    Document doc = Jsoup.connect(url).get();
+                    player.add(getStatItem(R.string.key_name, doc.getElementsByClass("pagetitle").text(), ""));
+                    player.add(getStatItem(R.string.key_playerRank, doc.getElementsByClass("pageTitle").first().nextElementSibling().text(), ""));
 
-                    try {
-                        Element lblErrorElement = doc.getElementById("lblError");
-                        if (lblErrorElement != null && lblErrorElement.html().contains("No player"))
-                            return ret;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
 
-                    try {
-                        Element viewStateElement = doc.getElementById("__VIEWSTATE");
-                        viewState = viewStateElement.attr("value");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    loadPlayerSummary();
-
-                    loadRecentMatches();
-
-                    loadClassTimes();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            return ret;
-        }
-
-        @NonNull
-        private final ArrayList<HashMap<String, String>> playerSummary = new ArrayList<>();
-
-        private void addSummaryValue(int valNameId, @NonNull String valKey) {
-            try {
-                Element element = doc.getElementById(valKey);
-                if (element != null)
-                    playerSummary.add(setVal(getResources().getString(valNameId), element.html()));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        private void loadPlayerSummary() {
-            addSummaryValue(R.string.key_name, "psName");
-            addSummaryValue(R.string.key_level, "psLevel");
-            addSummaryValue(R.string.key_last_online, "psLogin");
-            addSummaryValue(R.string.key_user_created, "psCreated");
-            addSummaryValue(R.string.key_matches_completed, "lblMatchesCompleted");
-            addSummaryValue(R.string.key_kills, "lblKills");
-            addSummaryValue(R.string.key_deaths, "lblDeaths");
-            addSummaryValue(R.string.key_assists, "lblAssists");
-            addSummaryValue(R.string.key_kill_death_ratio, "lblKDR");
-            addSummaryValue(R.string.key_ski_distance, "lblSkiDistance");
-            addSummaryValue(R.string.key_top_speed, "lblTopSpeed");
-            addSummaryValue(R.string.key_belt_kills, "lblBeltKills");
-            addSummaryValue(R.string.key_sprees, "lblSprees");
-            addSummaryValue(R.string.key_multi_kills, "lblMultiKill");
-            addSummaryValue(R.string.key_melee_kills, "lblMeleeKills");
-            addSummaryValue(R.string.key_midairs, "lblMidairs");
-            addSummaryValue(R.string.key_call_ins, "lblCallInsMade");
-            addSummaryValue(R.string.key_call_in_kills, "lblCallInKills");
-            addSummaryValue(R.string.key_full_regenerations, "lblFullRegeneration");
-            addSummaryValue(R.string.key_headshots, "lblHeadshots");
-            addSummaryValue(R.string.key_flag_caps, "lblFlagCaps");
-            addSummaryValue(R.string.key_flag_returns, "lblFlagReturns");
-            addSummaryValue(R.string.key_high_speed_grabs, "lblHighspeedGrabs");
-            addSummaryValue(R.string.key_generators_destroyed, "lblGensDestroyed");
-            addSummaryValue(R.string.key_base_assets_destroyed, "lblBaseAssetsDestroyed");
-            addSummaryValue(R.string.key_base_repairs, "lblBaseRepairs");
-            addSummaryValue(R.string.key_roadkills, "lblRoadkills");
-            addSummaryValue(R.string.key_vehicles_destroyed, "lblVehiclesDestroyed");
-            addSummaryValue(R.string.key_vehicle_kills, "lblVehicleKills");
-            addSummaryValue(R.string.key_base_upgrades, "lblBaseUpgrades");
-
-            ret.put("playerSum", playerSummary);
-        }
-
-        /**
-         * Adds the next match detail from {@param origin} to {@param destination}, using {@param name} as key
-         *
-         * @param origin      Where the detail is read
-         * @param destination Where the detail is written
-         * @param name        Key of the detail
-         */
-        private void addGameDetail(@NonNull Iterator<Element> origin, @NonNull HashMap<String, String> destination, @NonNull String name) {
-            try {
-                String value = origin.next().html();
-
-                if (name.equals("gameTimeInMatch")) {
-                    // I18n of the time value spent in game
-                    try {
-                        String minutes = value.replace(" mins", "");
-                        value = String.format(getResources().getString(R.string.minutes_short_format), minutes);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                destination.put(name, value);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        private void loadGameDetails(@NonNull Element origin, @NonNull HashMap<String, String> destination) {
-            Element gameTable = origin.getElementById("historyTable");
-            Iterator<Element> iterator = gameTable.select("span").iterator();
-            addGameDetail(iterator, destination, "gameKills");
-            addGameDetail(iterator, destination, "gameDeaths");
-            addGameDetail(iterator, destination, "gameAssists");
-            addGameDetail(iterator, destination, "gameKdRatio");
-            addGameDetail(iterator, destination, "gameScore");
-            addGameDetail(iterator, destination, "gameTimeInMatch");
-
-        }
-
-        private void loadPlayedGame(@NonNull Element origin, @NonNull ArrayList<HashMap<String, String>> destination) {
-            HashMap<String, String> playedGame = new HashMap<>();
-
-            try {
-                playedGame.put("imageUrl", origin.getElementsByClass("mapIcon").attr("src"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                Elements classesPlayed = origin.getElementById("iconContainer").getElementsByClass("classIcon");
-                StringBuilder classes = new StringBuilder("");
-
-                for (Element classPlayed : classesPlayed) {
-                    try {
-                        classes.append(classPlayed.attr("src"));
-                        classes.append(',');
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                playedGame.put("classesPlayed", classes.toString());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            try {
-                playedGame.put("mapPlayed", origin.getElementById("lblMapName").html());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                playedGame.put("timePlayed", origin.getElementById("lblMapEntryDatetime").html());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                if (origin.getElementById("btnGoToMap") != null) { //lots of null pointers here because hi-rez keeps only recent match history and when they dellete it the link is gone
-                    playedGame.put("matchDetails", origin.getElementById("btnGoToMap").attr("name"));
-                } else {
-                    playedGame.put("matchDetails", "NoDetails!!!");
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            loadGameDetails(origin, playedGame);
-
-            try {
-                destination.add(playedGame);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        private void loadRecentMatches() {
-            try {
-                ArrayList<HashMap<String, String>> recent = new ArrayList<>();
-                Elements games = doc.getElementById("historyTab").getElementsByClass("containerPh");
-                for (Element game : games)
-                    loadPlayedGame(game, recent);
-
-                ret.put("recent", recent);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        private void loadClassTimes() {
-            try {
-                Elements statsTab = doc.getElementById("tabs").getElementById("statsTab").getAllElements();
-
-                ArrayList<HashMap<String, String>> times = new ArrayList<>();
-
-                ArrayList<String> test = new ArrayList<>(); //used to check if that element was allredy in there because tribes ppl used id tag on one page 10 times >*
-
-                for (Element tab : statsTab) {
-                    if (tab.hasAttr("id") && tab.attr("id").equals("panelMap")) {
-                        HashMap<String, String> toAdd = new HashMap<>();
-
-                        try {
-                            String currentClass = tab.getElementById("lblTimePlayedClass").html();
-
-                            if (test.contains(currentClass)) {
-                                continue;
-                            }
-
-                            test.add(currentClass);
-
-                            toAdd.put("name", currentClass);
-
-                            Integer classPlayTime = 0;
-
-                            for (Element mapTime : tab.getElementsByClass("timeplayed")) {
-                                try {
-                                    String playedMap = mapTime.getElementsByClass("map").get(0).html();
-                                    String timePlayed = mapTime.getElementsByClass("time").get(0).html().replace("&lt; ", "");
-                                    classPlayTime += Integer.parseInt(timePlayed);
-
-                                    toAdd.put("map-" + playedMap, timePlayed);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-
-                            }
-                            toAdd.put("timeForClass", String.valueOf(classPlayTime));
-                            times.add(toAdd);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                    Elements statLines = doc.getElementsByClass("statstable").get(0).getElementsByAttribute("data-key");
+                    for(Element e: statLines){
+                        try{
+                            String value = e.getElementsByClass("val").text();
+                            String name = e.select("td").first().html();
+                            killStats.add(getStatItem(TribesUtils.STAT_STRINGS.get(name), value, ""));
+                        }catch (Exception exx){
+                            exx.printStackTrace();
                         }
                     }
+
+                    statLines = doc.getElementsByClass("statstable").get(1).getElementsByAttribute("data-key");
+                    for(Element e: statLines){
+                        try{
+                            String value = e.getElementsByClass("val").text();
+                            String name = e.select("td").first().html();
+                            matchStats.add(getStatItem(TribesUtils.STAT_STRINGS.get(name), value, ""));
+                        }catch (Exception exx){
+                            exx.printStackTrace();
+                        }
+                    }
+
+                    statLines = doc.getElementsByClass("statstable").get(2).getElementsByAttribute("data-key");
+                    for(Element e: statLines){
+                        try{
+                            String value = e.getElementsByClass("val").text();
+                            String name = e.select("td").first().html();
+                            baseStats.add(getStatItem(TribesUtils.STAT_STRINGS.get(name), value, ""));
+                        }catch (Exception exx){
+                            exx.printStackTrace();
+                        }
+                    }
+                    for(Element e: doc.getElementsByClass("classlegendtable").get(0).getElementsByAttribute("data-classname")){
+                        try{
+                            String name = e.attr("data-classname");
+                            String value = e.select("td").get(2).text();
+                            timeStats.add(getStatItem(TribesUtils.CLASS_STRINGS.get(name), value, name));
+                        }catch (Exception exx){
+                            exx.printStackTrace();
+                        }
+                    }
+
+                    for(Element e: doc.getElementsByClass("classlegendtable").get(1).getElementsByAttribute("data-gametype")){
+                        try{
+                            String name = e.attr("data-gametype");
+                            String value = e.select("td").get(2).text();
+                            gameModeStats.add(getStatItem(TribesUtils.GAMEMODE_STRINGS.get(name), value, ""));
+                        }catch (Exception exx){
+                            exx.printStackTrace();
+                        }
+                    }
+
+                } catch (Exception e) {
+                    return ret;
                 }
-                ret.put("times", times);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+
+            ret.put(PageName.Player, player);
+            ret.put(PageName.KillStats, killStats);
+            ret.put(PageName.MatchAverages, matchStats);
+            ret.put(PageName.BaseStats, baseStats);
+            ret.put(PageName.ClassTimes, timeStats);
+            ret.put(PageName.GameModeStas, gameModeStats);
+            return ret;
         }
 
         private final ProgressDialog dialog = new ProgressDialog(ctx);
 
         @Override
-        protected void onPostExecute(HashMap<String, ArrayList<HashMap<String, String>>> result) {
-            if (result.containsKey("playerSum")) {
+        protected void onPostExecute(HashMap<PageName, List<StatItem>> result) {
+            if (result.containsKey(PageName.Player)) {
                 try {
                     String playerTitleFormatter = getString(R.string.player_title_format);
-                    String username = result.get("playerSum").get(0).get("value");
+                    String username = result.get(PageName.Player).get(0).getValue();
                     try {
                         new HistoryManager(ctx).addUser(username);
                     } catch (Exception e) {
@@ -487,18 +271,8 @@ public class PlayerActivity extends FragmentActivity {
                     }
                     setTitle(String.format(playerTitleFormatter, username));
                     userData = result;
-                    /*
-      The {@link android.support.v4.view.PagerAdapter} that will provide
-	  fragments for each of the sections. We use a
-	  {@link android.support.v4.app.FragmentPagerAdapter} derivative, which
-	  will keep every loaded fragment in memory. If this becomes too memory
-	  intensive, it may be best to switch to a
-	  {@link android.support.v4.app.FragmentStatePagerAdapter}.
-	 */
                     SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-                    /*
-      The {@link ViewPager} that will host the section contents.
-	 */
+
                     ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
                     mViewPager.setAdapter(mSectionsPagerAdapter);
                     if (dialog.isShowing()) {
@@ -532,14 +306,14 @@ public class PlayerActivity extends FragmentActivity {
             // below) with the page number as its lone argument.
             Fragment fragment = new DummySectionFragment();
             Bundle args = new Bundle();
-            args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
+            args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position);
             fragment.setArguments(args);
             return fragment;
         }
 
         @Override
         public int getCount() {
-            return 3;
+            return 5;
         }
 
         @Override
@@ -552,6 +326,10 @@ public class PlayerActivity extends FragmentActivity {
                     return getString(R.string.title_section2).toUpperCase(l);
                 case 2:
                     return getString(R.string.title_section3).toUpperCase(l);
+                case 3:
+                    return getString(R.string.title_section5).toUpperCase(l);
+                case 4:
+                    return getString(R.string.title_section4).toUpperCase(l);
             }
             return null;
         }
