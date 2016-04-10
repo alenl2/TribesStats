@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -29,6 +30,16 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        TextView tw = (TextView)findViewById(R.id.textView);
+        tw.setClickable(true);
+        tw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.wilderzone.org/"));
+                startActivity(browserIntent);
+            }
+        });
+        
         inputText = (AutoCompleteTextView) findViewById(R.id.inputText);
         inputText.setOnEditorActionListener(new OnEditorActionListener() {
             @Override
@@ -85,7 +96,7 @@ public class MainActivity extends Activity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    // Will be called by hompage 'Submit' button onClick
+    // Will be called by homepage 'Submit' button onClick
     public void goToPlayer(View view) {
         if (isNetworkAvailable()) {
             String username = inputText.getText().toString();

@@ -43,10 +43,18 @@
 
     <ImageView
         android:id="@+id/timageTimeDetails"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="329dp"
+        android:layout_height="274dp"
         android:baselineAlignBottom="false"
         android:contentDescription="@string/back"
         android:cropToPadding="false"
         android:src="@drawable/attachment" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/credit"
+        android:textAppearance="@android:style/TextAppearance.Large" />
 </LinearLayout>
