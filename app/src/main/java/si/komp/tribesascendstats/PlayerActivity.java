@@ -49,11 +49,11 @@ public class PlayerActivity extends FragmentActivity {
         MatchAverages,
         KillStats,
         ClassTimes,
-        GameModeStas
+        GameModeStats
     }
 
-    public static final String url = "http://www.wilderzone.org/player/";
-    public static String user;
+    private static final String url = "http://www.wilderzone.org/player/";
+    private static String user;
     static boolean flag = true;
     private static Context ctx;
     private static HashMap<PageName, List<StatItem>> userData;
@@ -146,7 +146,7 @@ public class PlayerActivity extends FragmentActivity {
                     adapter = new StatsAdapter((Activity)ctx, userData.get(PageName.KillStats));
                     break;
                 case 3:
-                    adapter = new StatsAdapter((Activity)ctx, userData.get(PageName.GameModeStas));
+                    adapter = new StatsAdapter((Activity)ctx, userData.get(PageName.GameModeStats));
                     break;
                 case 4:
                     adapter = new TimeAdapter((Activity)ctx, userData.get(PageName.ClassTimes));
@@ -252,7 +252,7 @@ public class PlayerActivity extends FragmentActivity {
             ret.put(PageName.MatchAverages, matchStats);
             ret.put(PageName.BaseStats, baseStats);
             ret.put(PageName.ClassTimes, timeStats);
-            ret.put(PageName.GameModeStas, gameModeStats);
+            ret.put(PageName.GameModeStats, gameModeStats);
             return ret;
         }
 

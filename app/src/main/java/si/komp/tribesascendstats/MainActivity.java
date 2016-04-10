@@ -96,7 +96,7 @@ public class MainActivity extends Activity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    // Will be called by hompage 'Submit' button onClick
+    // Will be called by homepage 'Submit' button onClick
     public void goToPlayer(View view) {
         if (isNetworkAvailable()) {
             String username = inputText.getText().toString();
